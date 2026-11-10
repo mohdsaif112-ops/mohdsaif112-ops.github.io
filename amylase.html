@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر الأميليز الافتراضي</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+/* layout: one big drawing, mode buttons above, answer card below */
+:root{--bg:#eef3f0;--panel:#fff;--ink:#13261f;--muted:#5b6f66;--line:#cfdcd5;--palm:#0f6b5c;--palm-ink:#fff;--date:#b86e0f;--ok:#1f7a45;--ok-soft:#dcf1e3;--bad:#b3261e;--bad-soft:#f8dedb;
+ --ff:"Tajawal",Tahoma,"Segoe UI",sans-serif;--fd:"Reem Kufi","Tajawal",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff);direction:rtl;font-size:clamp(16px,1.6vw,22px);line-height:1.6;margin:0;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 24px}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+h1{font-family:var(--fd);color:var(--palm);margin:0;font-size:1.5em}
+.lead{color:var(--muted);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:800 .9em var(--ff);border:1.5px solid var(--palm);border-radius:10px;padding:9px 16px;background:transparent;color:var(--palm);cursor:pointer}
+.btn[aria-pressed="true"],.btn.main{background:var(--palm);color:var(--palm-ink)}
+.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible{outline:3px solid var(--date);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.wrap{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}}
+svg{width:100%;height:auto;display:block}
+.svgtxt{font-family:var(--ff);font-weight:800}
+.part{cursor:pointer}.part.on{stroke:var(--date);stroke-width:5}
+.part.ask{stroke:#e8590c;stroke-width:6;animation:blink 1s infinite}
+@keyframes blink{50%{stroke-opacity:.2}}
+@media (prefers-reduced-motion:reduce){.part.ask{animation:none}}
+.card{display:flex;flex-direction:column;gap:8px;min-height:8em}
+.card b{font-family:var(--fd);font-size:1.6em;color:var(--date)}
+.card p{margin:0;font-size:1.15em;font-weight:700}
+.ok{color:var(--ok)}.no{color:var(--bad)}
+.cap{font-size:1.2em;font-weight:800;color:var(--palm);text-align:center;min-height:1.6em}
+.dots{display:flex;gap:6px;justify-content:center}.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--date)}
+</style>
+<style>
+:root{--sub1:#2f6fd6;--sub2:#d9822b;--bond:#7a3e9d;--date-soft:#f7e6cc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub1:#79a6ff;--sub2:#f2a65a;--bond:#c39be0;--date-soft:#3a2a12}}
+:root[data-theme="dark"]{--sub1:#79a6ff;--sub2:#f2a65a;--bond:#c39be0;--date-soft:#3a2a12}
+.half{transition:transform .9s ease}@media (prefers-reduced-motion:reduce){.half{transition:none}}
+.seg{display:inline-flex;border:1.5px solid var(--palm);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--palm);font:700 .85em var(--ff);padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--palm);color:var(--palm-ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85em;color:var(--muted)}.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-inline-end:4px}
+.scene{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px}
+.ch{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.bub{position:relative;background:var(--date-soft);border:2px solid var(--date);border-radius:14px;padding:12px 14px;font-weight:700;width:100%;flex:1}
+.bub:after{content:"";position:absolute;bottom:-12px;left:50%;margin-left:-10px;border:10px solid transparent;border-top-color:var(--date);border-bottom:0}
+.bub .nm{display:block;color:var(--date);font-family:var(--fd);font-size:1.1em}
+.verdict{border-radius:10px;padding:8px 12px;font-size:.85em;font-weight:700;width:100%}
+.verdict.t{background:var(--ok-soft);color:var(--ok)}.verdict.f{background:var(--bad-soft);color:var(--bad)}.verdict span{color:var(--ink);font-weight:500}
+</style>
+<style>
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.lab{grid-template-columns:1fr}}
+.readout{display:flex;gap:16px;flex-wrap:wrap;font-weight:800;font-size:1.15em}
+.readout span{background:var(--ok-soft);color:var(--ink);border-radius:10px;padding:4px 12px;font-variant-numeric:tabular-nums}
+.tblwrap{overflow-x:auto}
+table.rec{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.85em;margin:0 auto}
+table.rec th,table.rec td{border:1px solid var(--line);padding:4px 7px;text-align:center;min-width:2.6em}
+table.rec th{background:var(--palm);color:var(--palm-ink)}
+.note{background:var(--ok-soft);border-radius:10px;padding:10px 14px;font-weight:700}
+</style>
+<style>
+.steps{display:flex;gap:6px;flex-wrap:wrap;counter-reset:s}
+.steps li{list-style:none;counter-increment:s;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);color:var(--muted);font-weight:700;font-size:.85em}
+.steps li::before{content:counter(s) ". "}
+.steps li.now{border-color:var(--date);color:var(--date);background:var(--date-soft)}
+.steps li.done{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.steps{padding:0;margin:0}
+.ask{font-size:1.2em;font-weight:800;margin:0 0 8px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px}
+.choice{font:800 1em var(--ff);padding:16px 12px;border-radius:14px;border:2px solid var(--palm);background:var(--panel);color:var(--ink);cursor:pointer;min-height:64px}
+.choice:hover{background:var(--ok-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.choice.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.big{font-size:1.15em;padding:14px 26px}
+.fb{min-height:1.6em;font-weight:800;margin-top:8px}
+</style>
+</head><body>
+<main>
+  <h1>مختبر الأميليز الافتراضي</h1>
+  <p class="lead">أنت من يجري التجربة: اختر المادة والإنزيم، ثم خذ عينة كل 30 ثانية وضعها على اليود، ويقرأ مقياس الألوان شدة اللون (الشكل 3-6، والمهارات العملية 3-1).</p>
+  <ol class="steps" id="steps"><li>اختر المادة</li><li>اختر الإنزيم</li><li>ابدأ وخذ العينات</li><li>النتيجة</li></ol>
+  <div class="panel" id="choose">
+    <p class="ask" id="ask"></p>
+    <div class="choices" id="opts"></div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <div class="panel" id="runbar" hidden>
+    <div class="row">
+      <button class="btn main big" id="go" type="button">امزج وابدأ</button>
+      <button class="btn main big" id="smp" type="button" hidden>خذ عينة</button>
+      <span class="readout"><span id="tShow">الزمن: 0 s</span><span id="aShow">قراءة مقياس الألوان: —</span></span>
+    </div>
+  </div>
+  <div class="lab">
+    <div class="panel"><svg id="app" viewBox="0 0 520 330" role="img" aria-label="أنبوبة تفاعل وبلاطة تنقيط ومقياس ألوان"></svg></div>
+    <div class="panel"><svg id="graph" viewBox="0 0 520 330" role="img" aria-label="منحنى النشا المتبقي مقابل الزمن"></svg></div>
+  </div>
+  <div class="panel tblwrap"><table class="rec" id="tbl"></table></div>
+  <div class="note" id="msg">ابدأ باختيار المادة المتفاعلة.</div>
+  <div class="row"><button class="btn" id="rate" type="button" hidden>احسب المعدل الأولي</button><button class="btn" id="reset" type="button">إعادة التجربة</button></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const STEP=30,N=12,SPEED=10,K=75;
+const starch=t=>Math.exp(-t/K);                 // نسبة النشا المتبقية
+const absb=t=>+(1.20*starch(t)).toFixed(2);     // قراءة مقياس الألوان (امتصاص)
+function color(s){const stops=[[1,[22,26,70]],[0.6,[40,40,90]],[0.35,[92,62,40]],[0.15,[150,100,45]],[0.05,[215,170,80]],[0,[238,205,110]]];
+  for(let i=0;i<stops.length-1;i++){const [a,ca]=stops[i],[b,cb]=stops[i+1];if(s<=a&&s>=b){const f=(a-s)/(a-b);return `rgb(${ca.map((c,k)=>Math.round(c+(cb[k]-c)*f)).join(',')})`}}return 'rgb(238,205,110)'}
+function name(s){return s>0.6?'أزرق قاتم':s>0.3?'أزرق مائل إلى البني':s>0.12?'بني':s>0.05?'بني باهت':'لا يوجد لون أزرق (لون اليود)'}
+let t=0,running=false,next=STEP,smp=[],raf=null,last=0;
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);(parent||$('app')).appendChild(e);return e}
+function txt(x,y,s,p,o){const e=el('text',Object.assign({x,y,'font-size':14,'text-anchor':'middle',fill:'var(--ink)','font-family':'Tajawal,Tahoma','font-weight':700},o||{}),p);e.textContent=s;return e}
+function drawApp(){const a=$('app');a.innerHTML='';
+  el('path',{d:'M40,40 L40,220 Q40,250 65,250 Q90,250 90,220 L90,40',fill:'#f6f9fb',stroke:'var(--ink)','stroke-width':3});
+  el('path',{id:'mix',d:'M42,110 L42,220 Q42,248 65,248 Q88,248 88,220 L88,110 Z',fill:'transparent'});
+  txt(65,275,'الأنبوبة فارغة').id='tlabel';
+  el('rect',{x:130,y:40,width:360,height:150,rx:14,fill:'#fbfbfb',stroke:'var(--ink)','stroke-width':2.5});
+  for(let i=0;i<N;i++){const cx=170+(i%6)*56,cy=82+Math.floor(i/6)*66;el('circle',{cx,cy,r:22,fill:'#fff',stroke:'#bbb','stroke-width':2});
+    el('circle',{id:'w'+i,cx,cy,r:15,fill:'rgb(238,205,110)'});txt(cx,cy+40,(i+1)*STEP+'',null,{'font-size':12,fill:'var(--muted)'})}
+  txt(310,212,'بلاطة التنقيط (قطرة يود في كل تجويف) · الزمن بالثواني');
+  el('rect',{x:150,y:240,width:330,height:70,rx:10,fill:'#eef3f0',stroke:'var(--palm)','stroke-width':2});
+  el('circle',{cx:185,cy:275,r:14,fill:'#ffe680',stroke:'#c9a400'});txt(185,302,'ضوء',null,{'font-size':12});
+  el('rect',{x:225,y:262,width:30,height:26,fill:'#9ecae1'});txt(240,302,'مرشح',null,{'font-size':12});
+  el('rect',{id:'cuv',x:290,y:252,width:30,height:46,rx:4,fill:'#fff',stroke:'var(--ink)'});txt(305,306,'المحلول',null,{'font-size':12});
+  el('rect',{x:355,y:258,width:110,height:34,rx:6,fill:'#13261f'});el('text',{id:'meter',x:410,y:281,'font-size':18,'text-anchor':'middle',fill:'#6cd39a','font-family':'monospace'}).textContent='--.--';
+  txt(410,250,'مقياس الإضاءة',null,{'font-size':12})}
+function draw(){smp.forEach((s,i)=>$('w'+i).setAttribute('fill',color(starch(s.t))));
+  for(let i=smp.length;i<N;i++)$('w'+i).setAttribute('fill','rgb(238,205,110)');
+  const last=smp[smp.length-1];if(last){$('cuv').setAttribute('fill',color(starch(last.t)));$('meter').textContent=last.a.toFixed(2)}
+  $('tShow').innerHTML='الزمن: <bdi dir="ltr">'+Math.round(t)+' s</bdi>';$('aShow').textContent='قراءة مقياس الألوان: '+(last?last.a.toFixed(2):'—');
+  let h='<tr><th>الزمن (s)</th>'+Array.from({length:N},(_,i)=>`<th>${(i+1)*STEP}</th>`).join('')+'</tr><tr><th>لون اختبار اليود</th>'+
+    Array.from({length:N},(_,i)=>`<td style="font-size:.8em">${smp[i]?name(starch(smp[i].t)):''}</td>`).join('')+'</tr><tr><th>قراءة مقياس الألوان</th>'+
+    Array.from({length:N},(_,i)=>`<td>${smp[i]?smp[i].a.toFixed(2):''}</td>`).join('')+'</tr>';$('tbl').innerHTML=h;graph()}
+const GX=x=>60+x/(N*STEP)*430,GY=y=>290-y/1.2*250;
+function graph(showRate){const g=$('graph');g.innerHTML='';
+  for(let k=0;k<=3;k++){const v=k*0.4;el('line',{x1:60,y1:GY(v),x2:490,y2:GY(v),stroke:'var(--line)'},g);txt(50,GY(v)+5,v.toFixed(1),g,{'text-anchor':'start','font-size':13,fill:'var(--muted)','font-weight':400})}
+  for(let s=0;s<=N*STEP;s+=60)txt(GX(s),310,s+'',g,{'font-size':13,fill:'var(--muted)','font-weight':400});
+  el('line',{x1:60,y1:290,x2:495,y2:290,stroke:'var(--ink)','stroke-width':2},g);el('line',{x1:60,y1:290,x2:60,y2:25,stroke:'var(--ink)','stroke-width':2},g);
+  txt(275,328,'الزمن (s)',g);txt(16,160,'النشا المتبقي (قراءة مقياس الألوان)',g,{transform:'rotate(-90 16 160)','font-size':13});
+  const pts=[{t:0,a:1.2}].concat(smp);if(pts.length>1)el('polyline',{points:pts.map(p=>GX(p.t)+','+GY(p.a)).join(' '),fill:'none',stroke:'var(--palm)','stroke-width':3},g);
+  pts.forEach(p=>el('circle',{cx:GX(p.t),cy:GY(p.a),r:5,fill:'var(--date)'},g));
+  if(showRate){const a1=absb(30);el('line',{x1:GX(0),y1:GY(1.2),x2:GX(75),y2:GY(1.2-(1.2-a1)*2.5),stroke:'var(--bad)','stroke-width':2.5,'stroke-dasharray':'7 5'},g);txt(GX(100),GY(0.95),'الميل في البداية = المعدل الأولي',g,{'text-anchor':'end',fill:'var(--bad)','font-size':14})}}
+function loop(now){const dt=Math.min(now-last,100);last=now;
+  if(running){t=Math.min(t+dt/1000*SPEED,next);$('smp').disabled=t<next;if(t>=next&&!$('smp').dataset.told){$('smp').dataset.told=1;$('msg').textContent=`وصلنا إلى ${next} s: اضغط «خذ عينة».`}
+}
+  $('tShow').innerHTML='الزمن: <bdi dir="ltr">'+Math.round(t)+' s</bdi>';raf=requestAnimationFrame(loop)}
+const STAGES=[
+ {q:'1) ماذا تضع في الأنبوبة؟',ok:0,opts:['محلول النشا','بيروكسيد الهيدروجين (ماء الأكسجين)','ماء مقطر'],
+  no:['','الأميليز لا يعمل على بيروكسيد الهيدروجين. اختر المادة التي يحلّلها الأميليز.','لا يوجد في الماء ما يحلّله الأميليز. جرّب مرة أخرى.'],
+  done:()=>{$('mix').setAttribute('fill','#dfe6ee');$('tlabel').textContent='النشا'}},
+ {q:'2) أي إنزيم تضيف؟',ok:0,opts:['الأميليز','الكتاليز'],
+  no:['','الكتاليز يفكك بيروكسيد الهيدروجين، ولا يحلّل النشا، فالإنزيم متخصص. جرّب مرة أخرى.'],
+  done:()=>{$('tlabel').textContent='النشا + الأميليز'}}];
+let stage=0;
+function setStep(n){[...$('steps').children].forEach((li,i)=>li.className=i<n?'done':i===n?'now':'')}
+function choiceSet(q,opts,onPick){$('choose').hidden=false;$('ask').textContent=q;$('fb').textContent='';$('opts').innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=o;b.onclick=()=>onPick(i,b);$('opts').appendChild(b)})}
+function say(ok,s){$('fb').className='fb '+(ok?'ok':'no');$('fb').textContent=s}
+function showStage(){const S=STAGES[stage];setStep(stage);
+  choiceSet(S.q,S.opts,(i,b)=>{if(i!==S.ok){b.classList.add('wrong');say(0,S.no[i]);return}
+    b.classList.add('right');say(1,'صحيح!');S.done();
+    setTimeout(()=>{stage++;if(stage<STAGES.length)showStage();else{$('choose').hidden=true;$('runbar').hidden=false;setStep(2);$('msg').textContent='الأدوات جاهزة. اضغط «امزج وابدأ».'}},700)})}
+function finalQ(){setStep(3);
+  choiceSet('ماذا حدث لكمية النشا مع الزمن؟ (انظر إلى اللون وقراءة مقياس الألوان)',['قلّت','زادت'],(i,b)=>{
+    if(i){b.classList.add('wrong');say(0,'اللون الأزرق يخف وقراءة مقياس الألوان تنخفض. جرّب مرة أخرى.');return}
+    b.classList.add('right');say(1,'صحيح! النشا يختفي لأن الأميليز يحلّله. فسّروا شكل المنحنى في ورقة العمل.');$('rate').hidden=false;$('rate').classList.add('main')})}
+$('go').onclick=()=>{if(running)return;running=true;$('go').hidden=true;$('smp').hidden=false;$('smp').disabled=true;$('msg').textContent='بدأ التفاعل. انتظر حتى 30 s ثم اضغط «خذ عينة».'};
+$('smp').onclick=()=>{smp.push({t:next,a:absb(next)});const s=starch(next);draw();$('smp').disabled=true;delete $('smp').dataset.told;
+  if(s<=0.05||smp.length>=N){running=false;$('runbar').hidden=true;$('msg').textContent=`نقطة النهاية: لم يظهر اللون الأزرق عند ${next} s، أي اختفى النشا.`;finalQ();return}
+  $('msg').textContent=`عند ${next} s: اللون ${name(s)}، وقراءة مقياس الألوان ${absb(next).toFixed(2)}.`;next+=STEP};
+$('rate').onclick=()=>{graph(true);const a1=absb(30);$('msg').innerHTML=`المعدل الأولي = التغير في قراءة مقياس الألوان في أول 30 ثانية ÷ 30 ثانية:<div dir="ltr" style="text-align:center;font-size:1.25em;margin:4px 0">(1.20 − ${a1.toFixed(2)}) ÷ 30 s ≈ ${((1.2-a1)/30).toFixed(3)} /s</div>`};
+$('reset').onclick=()=>{t=0;running=false;next=STEP;smp=[];stage=0;$('runbar').hidden=true;$('go').hidden=false;$('smp').hidden=true;$('rate').hidden=true;delete $('smp').dataset.told;
+  drawApp();draw();showStage();$('msg').textContent='ابدأ باختيار المادة المتفاعلة.'};
+drawApp();draw();showStage();last=performance.now();raf=requestAnimationFrame(loop);
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script></body></html>

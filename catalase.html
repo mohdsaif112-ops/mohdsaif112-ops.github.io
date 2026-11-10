@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر الكتاليز الافتراضي</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+/* layout: one big drawing, mode buttons above, answer card below */
+:root{--bg:#eef3f0;--panel:#fff;--ink:#13261f;--muted:#5b6f66;--line:#cfdcd5;--palm:#0f6b5c;--palm-ink:#fff;--date:#b86e0f;--ok:#1f7a45;--ok-soft:#dcf1e3;--bad:#b3261e;--bad-soft:#f8dedb;
+ --ff:"Tajawal",Tahoma,"Segoe UI",sans-serif;--fd:"Reem Kufi","Tajawal",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff);direction:rtl;font-size:clamp(16px,1.6vw,22px);line-height:1.6;margin:0;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 24px}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+h1{font-family:var(--fd);color:var(--palm);margin:0;font-size:1.5em}
+.lead{color:var(--muted);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:800 .9em var(--ff);border:1.5px solid var(--palm);border-radius:10px;padding:9px 16px;background:transparent;color:var(--palm);cursor:pointer}
+.btn[aria-pressed="true"],.btn.main{background:var(--palm);color:var(--palm-ink)}
+.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible{outline:3px solid var(--date);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.wrap{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}}
+svg{width:100%;height:auto;display:block}
+.svgtxt{font-family:var(--ff);font-weight:800}
+.part{cursor:pointer}.part.on{stroke:var(--date);stroke-width:5}
+.part.ask{stroke:#e8590c;stroke-width:6;animation:blink 1s infinite}
+@keyframes blink{50%{stroke-opacity:.2}}
+@media (prefers-reduced-motion:reduce){.part.ask{animation:none}}
+.card{display:flex;flex-direction:column;gap:8px;min-height:8em}
+.card b{font-family:var(--fd);font-size:1.6em;color:var(--date)}
+.card p{margin:0;font-size:1.15em;font-weight:700}
+.ok{color:var(--ok)}.no{color:var(--bad)}
+.cap{font-size:1.2em;font-weight:800;color:var(--palm);text-align:center;min-height:1.6em}
+.dots{display:flex;gap:6px;justify-content:center}.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--date)}
+</style>
+<style>
+:root{--sub1:#2f6fd6;--sub2:#d9822b;--bond:#7a3e9d;--date-soft:#f7e6cc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub1:#79a6ff;--sub2:#f2a65a;--bond:#c39be0;--date-soft:#3a2a12}}
+:root[data-theme="dark"]{--sub1:#79a6ff;--sub2:#f2a65a;--bond:#c39be0;--date-soft:#3a2a12}
+.half{transition:transform .9s ease}@media (prefers-reduced-motion:reduce){.half{transition:none}}
+.seg{display:inline-flex;border:1.5px solid var(--palm);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--palm);font:700 .85em var(--ff);padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--palm);color:var(--palm-ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85em;color:var(--muted)}.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-inline-end:4px}
+.scene{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px}
+.ch{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.bub{position:relative;background:var(--date-soft);border:2px solid var(--date);border-radius:14px;padding:12px 14px;font-weight:700;width:100%;flex:1}
+.bub:after{content:"";position:absolute;bottom:-12px;left:50%;margin-left:-10px;border:10px solid transparent;border-top-color:var(--date);border-bottom:0}
+.bub .nm{display:block;color:var(--date);font-family:var(--fd);font-size:1.1em}
+.verdict{border-radius:10px;padding:8px 12px;font-size:.85em;font-weight:700;width:100%}
+.verdict.t{background:var(--ok-soft);color:var(--ok)}.verdict.f{background:var(--bad-soft);color:var(--bad)}.verdict span{color:var(--ink);font-weight:500}
+</style>
+<style>
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.lab{grid-template-columns:1fr}}
+.readout{display:flex;gap:16px;flex-wrap:wrap;font-weight:800;font-size:1.15em}
+.readout span{background:var(--ok-soft);color:var(--ink);border-radius:10px;padding:4px 12px;font-variant-numeric:tabular-nums}
+.tblwrap{overflow-x:auto}
+table.rec{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.85em;margin:0 auto}
+table.rec th,table.rec td{border:1px solid var(--line);padding:4px 7px;text-align:center;min-width:2.6em}
+table.rec th{background:var(--palm);color:var(--palm-ink)}
+table.rec td.new{background:var(--date-soft);font-weight:800}
+.note{background:var(--ok-soft);border-radius:10px;padding:10px 14px;font-weight:700}
+</style>
+<style>
+.steps{display:flex;gap:6px;flex-wrap:wrap;counter-reset:s}
+.steps li{list-style:none;counter-increment:s;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);color:var(--muted);font-weight:700;font-size:.85em}
+.steps li::before{content:counter(s) ". "}
+.steps li.now{border-color:var(--date);color:var(--date);background:var(--date-soft)}
+.steps li.done{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.steps{padding:0;margin:0}
+.ask{font-size:1.2em;font-weight:800;margin:0 0 8px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px}
+.choice{font:800 1em var(--ff);padding:16px 12px;border-radius:14px;border:2px solid var(--palm);background:var(--panel);color:var(--ink);cursor:pointer;min-height:64px}
+.choice:hover{background:var(--ok-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.choice.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.big{font-size:1.15em;padding:14px 26px}
+.fb{min-height:1.6em;font-weight:800;margin-top:8px}
+</style>
+</head><body>
+<main>
+  <h1>مختبر الكتاليز الافتراضي</h1>
+  <p class="lead">أنت من يجري التجربة: اختر المادة والإنزيم، ثم ابدأ واقرأ حجم الأكسجين في حقنة الغاز كل 30 ثانية (الشكل 3-5).</p>
+  <ol class="steps" id="steps"><li>اختر المادة</li><li>اختر الإنزيم</li><li>ابدأ وسجّل</li><li>النتيجة</li></ol>
+  <div class="panel" id="choose">
+    <p class="ask" id="ask"></p>
+    <div class="choices" id="opts"></div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <div class="panel" id="runbar" hidden>
+    <div class="row">
+      <button class="btn main big" id="go" type="button">ابدأ التفاعل</button>
+      <button class="btn main big" id="rec" type="button" hidden>سجّل القراءة</button>
+      <span class="readout"><span id="tShow">الزمن: 0 s</span><span id="vShow">حجم الأكسجين: 0.0 mL</span></span>
+    </div>
+  </div>
+  <div class="lab">
+    <div class="panel"><svg id="app" viewBox="0 0 520 330" role="img" aria-label="دورق متصل بحقنة غاز"></svg></div>
+    <div class="panel"><svg id="graph" viewBox="0 0 520 330" role="img" aria-label="منحنى حجم الأكسجين مقابل الزمن"></svg></div>
+  </div>
+  <div class="panel tblwrap"><table class="rec" id="tbl"></table></div>
+  <div class="note" id="msg">ابدأ باختيار المادة المتفاعلة.</div>
+  <div class="row"><button class="btn" id="rate" type="button" hidden>احسب المعدل الأولي</button><button class="btn" id="reset" type="button">إعادة التجربة</button></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const DATA=[0,2.9,4.9,6.2,7.0,7.6,8.0,8.3,8.4,8.6,8.6,8.7,8.7,8.8]; // حجم O2 (mL) كل 30 s
+const STEP=30,TMAX=390,SPEED=10; // ثانية تجربة لكل ثانية حقيقية
+const vol=t=>{const i=Math.min(Math.floor(t/STEP),DATA.length-2),f=(t-i*STEP)/STEP;return DATA[i]+(DATA[i+1]-DATA[i])*f};
+let t=0,running=false,waiting=false,next=STEP,rec=[0],raf=null,last=0,bub=[];
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);(parent||$('app')).appendChild(e);return e}
+function drawApp(){const a=$('app');a.innerHTML='';
+  el('path',{d:'M70,120 L70,175 L35,285 Q32,300 50,300 L170,300 Q188,300 185,285 L150,175 L150,120 Z',fill:'#e8f1f8',stroke:'var(--ink)','stroke-width':3});
+  el('path',{id:'liq',d:'M48,260 L172,260 L182,290 Q184,298 170,298 L50,298 Q36,298 38,290 Z',fill:'#cfe3f5',opacity:0});
+  el('rect',{x:62,y:108,width:96,height:16,rx:4,fill:'#8a6d4b'});
+  el('path',{d:'M110,108 L110,70 L260,70 L260,95',fill:'none',stroke:'var(--ink)','stroke-width':4});
+  el('rect',{x:260,y:85,width:220,height:34,rx:6,fill:'#f6f9fb',stroke:'var(--ink)','stroke-width':3});
+  for(let m=0;m<=10;m++){const x=265+m*20;el('line',{x1:x,y1:85,x2:x,y2:m%5?94:100,stroke:'var(--muted)','stroke-width':1.5});
+    if(m%5===0){const tx=el('text',{x:x,y:78,'font-size':13,'text-anchor':'middle',fill:'var(--muted)','font-family':'Tajawal,Tahoma'});tx.textContent=m}}
+  el('rect',{id:'gas',x:265,y:89,width:0,height:26,fill:'#bfe6cf'});
+  el('rect',{id:'plunger',x:265,y:80,width:8,height:44,fill:'var(--palm)'});
+  el('line',{id:'rod',x1:273,y1:102,x2:500,y2:102,stroke:'var(--palm)','stroke-width':5});
+  const l1=el('text',{x:110,y:325,'font-size':15,'text-anchor':'middle',fill:'var(--ink)','font-family':'Tajawal,Tahoma','font-weight':700});l1.id='flabel';l1.textContent='الدورق فارغ';
+  const l2=el('text',{x:370,y:145,'font-size':15,'text-anchor':'middle',fill:'var(--ink)','font-family':'Tajawal,Tahoma','font-weight':700});l2.textContent='حقنة الغاز (mL)';
+  el('g',{id:'bubbles'})}
+function updApp(){const v=vol(t),w=v*20;$('gas').setAttribute('width',w);$('plunger').setAttribute('x',265+w);$('rod').setAttribute('x1',273+w);
+  $('tShow').innerHTML='الزمن: <bdi dir="ltr">'+Math.round(t)+' s</bdi>';$('vShow').innerHTML='حجم الأكسجين: <bdi dir="ltr">'+v.toFixed(1)+' mL</bdi>'}
+function bubbles(dt){const g=$('bubbles');const rate=running&&!waiting?(vol(Math.min(t+1,TMAX))-vol(t)):0;
+  if(Math.random()<rate*6)bub.push({x:60+Math.random()*100,y:290,r:2+Math.random()*3});
+  bub.forEach(b=>b.y-=dt*0.12);bub=bub.filter(b=>b.y>262);g.innerHTML='';bub.forEach(b=>el('circle',{cx:b.x,cy:b.y,r:b.r,fill:'#fff',stroke:'#7fb3d5'},g))}
+const GX=x=>60+x/TMAX*430,GY=y=>290-y/10*260;
+function drawGraph(showRate){const g=$('graph');g.innerHTML='';
+  for(let v=0;v<=10;v+=2){el('line',{x1:60,y1:GY(v),x2:490,y2:GY(v),stroke:'var(--line)'},g);const tx=el('text',{x:50,y:GY(v)+5,'font-size':13,'text-anchor':'start',fill:'var(--muted)','font-family':'Tajawal,Tahoma'},g);tx.textContent=v}
+  for(let s=0;s<=TMAX;s+=60){const tx=el('text',{x:GX(s),y:310,'font-size':13,'text-anchor':'middle',fill:'var(--muted)','font-family':'Tajawal,Tahoma'},g);tx.textContent=s}
+  el('line',{x1:60,y1:290,x2:495,y2:290,stroke:'var(--ink)','stroke-width':2},g);el('line',{x1:60,y1:290,x2:60,y2:20,stroke:'var(--ink)','stroke-width':2},g);
+  const xl=el('text',{x:275,y:328,'font-size':14,'text-anchor':'middle',fill:'var(--ink)','font-family':'Tajawal,Tahoma','font-weight':700},g);xl.textContent='الزمن (s)';
+  const yl=el('text',{x:16,y:155,'font-size':14,'text-anchor':'middle',fill:'var(--ink)','font-family':'Tajawal,Tahoma','font-weight':700,transform:'rotate(-90 16 155)'},g);yl.textContent='حجم O₂ (mL)';
+  if(rec.length>1)el('polyline',{points:rec.map((v,i)=>GX(i*STEP)+','+GY(v)).join(' '),fill:'none',stroke:'var(--palm)','stroke-width':3},g);
+  rec.forEach((v,i)=>el('circle',{cx:GX(i*STEP),cy:GY(v),r:5,fill:'var(--date)'},g));
+  if(showRate){el('line',{x1:GX(0),y1:GY(0),x2:GX(90),y2:GY(DATA[1]*3),stroke:'var(--bad)','stroke-width':2.5,'stroke-dasharray':'7 5'},g);
+    const tx=el('text',{x:GX(100),y:GY(DATA[1]*3)-8,'font-size':14,'text-anchor':'end',fill:'var(--bad)','font-family':'Tajawal,Tahoma','font-weight':800},g);tx.textContent='الميل في البداية = المعدل الأولي'}}
+function drawTable(){let h='<tr><th>الزمن (s)</th>';for(let i=0;i<DATA.length;i++)h+=`<th>${i*STEP}</th>`;h+='</tr><tr><th>حجم O₂ (mL)</th>';
+  for(let i=0;i<DATA.length;i++)h+=`<td class="${i===rec.length-1&&i>0?'new':''}">${i<rec.length?rec[i].toFixed(1):''}</td>`;$('tbl').innerHTML=h+'</tr>'}
+function loop(now){const dt=Math.min(now-last,100);last=now;
+  if(running&&!waiting){t=Math.min(t+dt/1000*SPEED,next);if(t>=next){waiting=true;$('rec').disabled=false;$('rec').classList.add('main');$('msg').textContent=`توقف المؤقت عند ${next} s: اقرأ الحجم من الحقنة واضغط «سجّل القراءة».`}}
+  updApp();bubbles(dt);raf=requestAnimationFrame(loop)}
+const STAGES=[
+ {q:'1) ماذا تضع في الدورق؟',ok:0,opts:['بيروكسيد الهيدروجين (ماء الأكسجين)','محلول النشا','ماء مقطر'],
+  no:['','الكتاليز لا يعمل على النشا. اختر المادة التي يفككها الكتاليز.','الماء ناتج التفاعل لا المادة المتفاعلة. جرّب مرة أخرى.'],
+  done:()=>{$('liq').setAttribute('opacity',1);$('flabel').textContent='بيروكسيد الهيدروجين'}},
+ {q:'2) أي إنزيم تضيف؟',ok:0,opts:['الكتاليز (من الكبد أو الخميرة)','الأميليز'],
+  no:['','الأميليز يحلّل النشا، ولا يفكك بيروكسيد الهيدروجين، فالإنزيم متخصص. جرّب مرة أخرى.'],
+  done:()=>{$('flabel').textContent='بيروكسيد الهيدروجين + الكتاليز'}}];
+let stage=0;
+function setStep(n){[...$('steps').children].forEach((li,i)=>li.className=i<n?'done':i===n?'now':'')}
+function showStage(){const S=STAGES[stage];setStep(stage);$('ask').textContent=S.q;$('fb').textContent='';$('opts').innerHTML='';
+  S.opts.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=o;
+    b.onclick=()=>{if(i!==S.ok){b.classList.add('wrong');$('fb').className='fb no';$('fb').textContent=S.no[i];return}
+      b.classList.add('right');$('fb').className='fb ok';$('fb').textContent='صحيح!';S.done();
+      setTimeout(()=>{stage++;if(stage<STAGES.length)showStage();else{$('choose').hidden=true;$('runbar').hidden=false;setStep(2);$('msg').textContent='الأدوات جاهزة. اضغط «ابدأ التفاعل».'}},700)};
+    $('opts').appendChild(b)})}
+function finalQ(){setStep(3);$('choose').hidden=false;$('ask').textContent='أين كان التفاعل أسرع؟ (انظر إلى ميل المنحنى)';$('fb').textContent='';$('opts').innerHTML='';
+  [['في البداية',1],['في النهاية',0]].forEach(([o,r])=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=o;
+    b.onclick=()=>{if(!r){b.classList.add('wrong');$('fb').className='fb no';$('fb').textContent='المنحنى في النهاية يكاد يكون أفقياً: الحجم لا يزيد تقريباً. جرّب مرة أخرى.';return}
+      b.classList.add('right');$('fb').className='fb ok';$('fb').textContent='صحيح! المنحنى أشد ميلاً في البداية. فسّروا السبب في ورقة العمل.';$('rate').hidden=false;$('rate').classList.add('main')};
+    $('opts').appendChild(b)})}
+$('go').onclick=()=>{if(running)return;running=true;$('go').hidden=true;$('rec').hidden=false;$('rec').disabled=true;$('msg').textContent='بدأ التفاعل: تتحرر فقاعات الأكسجين ويتحرك مكبس الحقنة. يتوقف المؤقت عند كل 30 ثانية.'};
+$('rec').onclick=()=>{rec.push(DATA[rec.length]);drawTable();drawGraph(false);$('rec').disabled=true;
+  if(next>=TMAX){running=false;$('runbar').hidden=true;$('msg').textContent='انتهت القراءات. انظر إلى المنحنى وأجب عن السؤال.';finalQ();return}
+  next+=STEP;waiting=false;$('msg').textContent='سُجّلت القراءة. التفاعل مستمر…'};
+$('rate').onclick=()=>{drawGraph(true);$('msg').innerHTML=`المعدل الأولي = حجم الأكسجين في أول 30 ثانية ÷ 30 ثانية:<div dir="ltr" style="text-align:center;font-size:1.25em;margin:4px 0">${DATA[1].toFixed(1)} mL ÷ 30 s ≈ ${(DATA[1]/30).toFixed(2)} mL/s</div>`};
+$('reset').onclick=()=>{t=0;running=false;waiting=false;next=STEP;rec=[0];bub=[];stage=0;$('choose').hidden=false;$('runbar').hidden=true;$('go').hidden=false;$('rec').hidden=true;$('rate').hidden=true;
+  drawApp();drawTable();drawGraph(false);updApp();showStage();$('msg').textContent='ابدأ باختيار المادة المتفاعلة.'};
+drawApp();drawTable();drawGraph(false);updApp();showStage();last=performance.now();raf=requestAnimationFrame(loop);
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script></body></html>
