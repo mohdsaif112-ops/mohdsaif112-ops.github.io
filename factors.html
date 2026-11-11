@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر العوامل المؤثرة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+/* layout: one big drawing, mode buttons above, answer card below */
+:root{--bg:#eef3f0;--panel:#fff;--ink:#13261f;--muted:#5b6f66;--line:#cfdcd5;--palm:#0f6b5c;--palm-ink:#fff;--date:#b86e0f;--ok:#1f7a45;--ok-soft:#dcf1e3;--bad:#b3261e;--bad-soft:#f8dedb;
+ --ff:"Tajawal",Tahoma,"Segoe UI",sans-serif;--fd:"Reem Kufi","Tajawal",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff);direction:rtl;font-size:clamp(16px,1.6vw,22px);line-height:1.6;margin:0;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 24px}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+h1{font-family:var(--fd);color:var(--palm);margin:0;font-size:1.5em}
+.lead{color:var(--muted);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:800 .9em var(--ff);border:1.5px solid var(--palm);border-radius:10px;padding:9px 16px;background:transparent;color:var(--palm);cursor:pointer}
+.btn[aria-pressed="true"],.btn.main{background:var(--palm);color:var(--palm-ink)}
+.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible{outline:3px solid var(--date);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.wrap{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}}
+svg{width:100%;height:auto;display:block}
+.svgtxt{font-family:var(--ff);font-weight:800}
+.part{cursor:pointer}.part.on{stroke:var(--date);stroke-width:5}
+.part.ask{stroke:#e8590c;stroke-width:6;animation:blink 1s infinite}
+@keyframes blink{50%{stroke-opacity:.2}}
+@media (prefers-reduced-motion:reduce){.part.ask{animation:none}}
+.card{display:flex;flex-direction:column;gap:8px;min-height:8em}
+.card b{font-family:var(--fd);font-size:1.6em;color:var(--date)}
+.card p{margin:0;font-size:1.15em;font-weight:700}
+.ok{color:var(--ok)}.no{color:var(--bad)}
+.cap{font-size:1.2em;font-weight:800;color:var(--palm);text-align:center;min-height:1.6em}
+.dots{display:flex;gap:6px;justify-content:center}.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--date)}
+</style>
+<style>
+:root{--sub1:#2f6fd6;--sub2:#d9822b;--bond:#7a3e9d;--date-soft:#f7e6cc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub1:#79a6ff;--sub2:#f2a65a;--bond:#c39be0;--date-soft:#3a2a12}}
+:root[data-theme="dark"]{--sub1:#79a6ff;--sub2:#f2a65a;--bond:#c39be0;--date-soft:#3a2a12}
+.half{transition:transform .9s ease}@media (prefers-reduced-motion:reduce){.half{transition:none}}
+.seg{display:inline-flex;border:1.5px solid var(--palm);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--palm);font:700 .85em var(--ff);padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--palm);color:var(--palm-ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85em;color:var(--muted)}.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-inline-end:4px}
+.scene{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px}
+.ch{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.bub{position:relative;background:var(--date-soft);border:2px solid var(--date);border-radius:14px;padding:12px 14px;font-weight:700;width:100%;flex:1}
+.bub:after{content:"";position:absolute;bottom:-12px;left:50%;margin-left:-10px;border:10px solid transparent;border-top-color:var(--date);border-bottom:0}
+.bub .nm{display:block;color:var(--date);font-family:var(--fd);font-size:1.1em}
+.verdict{border-radius:10px;padding:8px 12px;font-size:.85em;font-weight:700;width:100%}
+.verdict.t{background:var(--ok-soft);color:var(--ok)}.verdict.f{background:var(--bad-soft);color:var(--bad)}.verdict span{color:var(--ink);font-weight:500}
+</style>
+<style>
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.lab{grid-template-columns:1fr}}
+.readout{display:flex;gap:16px;flex-wrap:wrap;font-weight:800;font-size:1.15em}
+.readout span{background:var(--ok-soft);color:var(--ink);border-radius:10px;padding:4px 12px;font-variant-numeric:tabular-nums}
+.tblwrap{overflow-x:auto}
+table.rec{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.85em;margin:0 auto}
+table.rec th,table.rec td{border:1px solid var(--line);padding:4px 7px;text-align:center;min-width:2.6em}
+table.rec th{background:var(--palm);color:var(--palm-ink)}
+table.rec td.new{background:var(--date-soft);font-weight:800}
+.note{background:var(--ok-soft);border-radius:10px;padding:10px 14px;font-weight:700}
+</style>
+<style>
+.steps{display:flex;gap:6px;flex-wrap:wrap;counter-reset:s}
+.steps li{list-style:none;counter-increment:s;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);color:var(--muted);font-weight:700;font-size:.85em}
+.steps li::before{content:counter(s) ". "}
+.steps li.now{border-color:var(--date);color:var(--date);background:var(--date-soft)}
+.steps li.done{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.steps{padding:0;margin:0}
+.ask{font-size:1.2em;font-weight:800;margin:0 0 8px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px}
+.choice{font:800 1em var(--ff);padding:16px 12px;border-radius:14px;border:2px solid var(--palm);background:var(--panel);color:var(--ink);cursor:pointer;min-height:64px}
+.choice:hover{background:var(--ok-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.choice.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.big{font-size:1.15em;padding:14px 26px}
+.fb{min-height:1.6em;font-weight:800;margin-top:8px}
+</style>
+<style>
+.vals{display:flex;flex-wrap:wrap;gap:8px}
+.val{font:800 1em var(--ff);padding:10px 16px;border-radius:12px;border:2px solid var(--palm);background:var(--panel);color:var(--ink);cursor:pointer;min-width:84px}
+.val[aria-pressed="true"]{background:var(--palm);color:var(--palm-ink)}
+.val.done{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.val:disabled{cursor:default}
+</style>
+</head><body>
+<main>
+  <h1>مختبر العوامل المؤثرة في عمل الإنزيم</h1>
+  <p class="lead">أنت من يجري التجربة: اختر العامل الذي تغيّره، ثم أجرِ التفاعل بخمسة تراكيز، واقرأ حجم الأكسجين بعد 30 ثانية لحساب المعدل الأولي (الشكلان 3-9 و3-10).</p>
+  <ol class="steps" id="steps"><li>اختر العامل</li><li>ما الذي يبقى ثابتاً؟</li><li>أجرِ التجارب الخمس</li><li>النتيجة</li></ol>
+  <div class="panel" id="choose">
+    <p class="ask" id="ask"></p>
+    <div class="choices" id="opts"></div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <div class="panel" id="runbar" hidden>
+    <p class="ask" id="runask"></p>
+    <div class="vals" id="vals"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn main big" id="go" type="button" disabled>ابدأ التفاعل</button>
+      <span class="readout"><span id="tShow">الزمن: 0 s</span><span id="vShow">حجم الأكسجين: 0.0 mL</span></span>
+    </div>
+  </div>
+  <div class="lab">
+    <div class="panel"><svg id="app" viewBox="0 0 520 330" role="img" aria-label="دورق متصل بحقنة غاز"></svg></div>
+    <div class="panel"><svg id="graph" viewBox="0 0 520 330" role="img" aria-label="المعدل الأولي مقابل التركيز"></svg></div>
+  </div>
+  <div class="panel tblwrap"><table class="rec" id="tbl"></table></div>
+  <div class="note" id="msg">ابدأ باختيار العامل الذي تريد تغييره.</div>
+  <div class="row"><button class="btn" id="reset" type="button">ابدأ من جديد</button></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+// بيانات ثابتة تطابق نموذج إجابة ورقة العمل: حجم الأكسجين بعد 30 ثانية (mL)، والمعدل الأولي = الحجم × 2 (mL/min)
+const MODES={
+ enz:{name:'تركيز الإنزيم',xs:[0.5,1,2,3,4],o2:[0.4,0.8,1.6,2.4,3.2],xmax:4,xlabel:'حجم مستخلص الكرفس (mL)',unit:'mL من مستخلص الكرفس',
+  flask:'بيروكسيد الهيدروجين 10 mL + مستخلص الكرفس',
+  cq:'ما الذي يجب أن يبقى ثابتاً في التجارب الخمس؟',copts:['حجم بيروكسيد الهيدروجين','حجم مستخلص الكرفس (الكتاليز)'],
+  cno:['','هذا هو العامل الذي تغيّره أنت. ما الذي يبقى ثابتاً؟'],
+  cok:'صحيح! يبقى حجم بيروكسيد الهيدروجين ثابتاً، ويُضاف الماء المقطّر ليكون الحجم الكلي نفسه في كل تجربة.',
+  fq:'ما شكل العلاقة بين تركيز الإنزيم والمعدل الأولي للتفاعل؟',
+  fopts:[['خط مستقيم: يزداد المعدل بانتظام (علاقة طردية)',1],['يزداد المعدل ثم يثبت',0],['يقل المعدل',0]],
+  fno:'انظر إلى النقاط في الرسم: هل تقع على خط مستقيم؟',fok:'صحيح! المعدل الأولي يتناسب طردياً مع تركيز الإنزيم. فسّروا السبب في ورقة العمل.'},
+ sub:{name:'تركيز المادة المتفاعلة',xs:[1,2,4,6,8],o2:[1.0,1.5,2.0,2.3,2.4],xmax:8,xlabel:'حجم بيروكسيد الهيدروجين (mL)',unit:'mL من بيروكسيد الهيدروجين',
+  flask:'بيروكسيد الهيدروجين + مستخلص الكرفس 2 mL',
+  cq:'ما الذي يجب أن يبقى ثابتاً في التجارب الخمس؟',copts:['حجم مستخلص الكرفس (الكتاليز)','حجم بيروكسيد الهيدروجين'],
+  cno:['','هذا هو العامل الذي تغيّره أنت. ما الذي يبقى ثابتاً؟'],
+  cok:'صحيح! يبقى حجم الكتاليز ثابتاً، ويتغيّر حجم بيروكسيد الهيدروجين، ويُضاف الماء المقطّر ليكون الحجم الكلي نفسه.',
+  fq:'ما شكل العلاقة بين تركيز المادة المتفاعلة والمعدل الأولي للتفاعل؟',
+  fopts:[['يزداد المعدل ثم يثبت عند قيمة قصوى',1],['خط مستقيم: يزداد المعدل دائماً',0],['يقل المعدل',0]],
+  fno:'انظر إلى آخر نقطتين في الرسم: هل ما زال المعدل يزداد بالمقدار نفسه؟',fok:'صحيح! تُسمّى القيمة القصوى للمعدل Vmax (الخط المتقطع). تحقّقوا من العبارات في ورقة العمل.'}};
+let mode=null,cur=-1,done=[],running=false,t=0,last=0,bub=[],stage=0,showV=false;
+function el(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);(p||$('app')).appendChild(e);return e}
+function txt(x,y,s,p,o){const e=el('text',Object.assign({x,y,'font-size':14,'text-anchor':'middle',fill:'var(--ink)','font-family':'Tajawal,Tahoma','font-weight':700},o||{}),p);e.textContent=s;return e}
+function setStep(n){[...$('steps').children].forEach((li,i)=>li.className=i<n?'done':i===n?'now':'')}
+function say(ok,s){$('fb').className='fb '+(ok?'ok':'no');$('fb').textContent=s}
+function choiceSet(q,opts,onPick){$('choose').hidden=false;$('ask').textContent=q;$('fb').textContent='';$('opts').innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=o;b.onclick=()=>onPick(i,b);$('opts').appendChild(b)})}
+function drawApp(){const a=$('app');a.innerHTML='';
+  el('path',{d:'M70,120 L70,175 L35,285 Q32,300 50,300 L170,300 Q188,300 185,285 L150,175 L150,120 Z',fill:'#e8f1f8',stroke:'var(--ink)','stroke-width':3});
+  el('path',{id:'liq',d:'M48,260 L172,260 L182,290 Q184,298 170,298 L50,298 Q36,298 38,290 Z',fill:'#cfe3f5',opacity:mode?1:0});
+  el('rect',{x:62,y:108,width:96,height:16,rx:4,fill:'#8a6d4b'});
+  el('path',{d:'M110,108 L110,70 L260,70 L260,95',fill:'none',stroke:'var(--ink)','stroke-width':4});
+  el('rect',{x:260,y:85,width:220,height:34,rx:6,fill:'#f6f9fb',stroke:'var(--ink)','stroke-width':3});
+  for(let m=0;m<=5;m++){const x=265+m*40;el('line',{x1:x,y1:85,x2:x,y2:m%1?94:100,stroke:'var(--muted)','stroke-width':1.5});txt(x,78,String(m),null,{'font-size':13,fill:'var(--muted)','font-weight':400})}
+  el('rect',{id:'gas',x:265,y:89,width:0,height:26,fill:'#bfe6cf'});
+  el('rect',{id:'plunger',x:265,y:80,width:8,height:44,fill:'var(--palm)'});
+  el('line',{id:'rod',x1:273,y1:102,x2:500,y2:102,stroke:'var(--palm)','stroke-width':5});
+  txt(110,325,mode?MODES[mode].flask:'الدورق فارغ',null,{'font-size':13});
+  txt(370,145,'حقنة الغاز (mL)');
+  el('g',{id:'bubbles'})}
+const vol=()=>cur<0?0:MODES[mode].o2[cur]*Math.min(1,t/30)*(2-Math.min(1,t/30));
+function updApp(){const v=vol(),w=v*40;$('gas').setAttribute('width',w);$('plunger').setAttribute('x',265+w);$('rod').setAttribute('x1',273+w);
+  $('tShow').innerHTML='الزمن: <bdi dir="ltr">'+Math.round(t)+' s</bdi>';$('vShow').innerHTML='حجم الأكسجين: <bdi dir="ltr">'+v.toFixed(1)+' mL</bdi>'}
+function bubbles(dt){const g=$('bubbles');if(!g)return;if(running&&Math.random()<0.25+MODES[mode].o2[cur]*0.2)bub.push({x:60+Math.random()*100,y:290,r:2+Math.random()*3});
+  bub.forEach(b=>b.y-=dt*0.12);bub=bub.filter(b=>b.y>262);g.innerHTML='';bub.forEach(b=>el('circle',{cx:b.x,cy:b.y,r:b.r,fill:'#fff',stroke:'#7fb3d5'},g))}
+function graph(){const g=$('graph');g.innerHTML='';const M=mode?MODES[mode]:MODES.enz;
+  const GX=x=>60+x/M.xmax*420,GY=y=>290-y/8*260;
+  for(let v=0;v<=8;v+=2){el('line',{x1:60,y1:GY(v),x2:485,y2:GY(v),stroke:'var(--line)'},g);txt(50,GY(v)+5,String(v),g,{'text-anchor':'start','font-size':13,fill:'var(--muted)','font-weight':400})}
+  for(let k=0;k<=4;k++){const x=M.xmax*k/4;txt(GX(x),310,String(x),g,{'font-size':13,fill:'var(--muted)','font-weight':400})}
+  el('line',{x1:60,y1:290,x2:490,y2:290,stroke:'var(--ink)','stroke-width':2},g);el('line',{x1:60,y1:290,x2:60,y2:20,stroke:'var(--ink)','stroke-width':2},g);
+  txt(275,328,M.xlabel,g,{'font-size':13});txt(16,155,'المعدل الأولي (mL O₂/min)',g,{transform:'rotate(-90 16 155)','font-size':13});
+  const pts=M.xs.map((x,i)=>done.includes(i)?[GX(x),GY(M.o2[i]*2)]:null).filter(Boolean);
+  if(pts.length>1&&done.length===5)el('polyline',{points:[[GX(0),GY(0)],...pts].map(p=>p.join(',')).join(' '),fill:'none',stroke:'var(--palm)','stroke-width':3},g);
+  pts.forEach(p=>el('circle',{cx:p[0],cy:p[1],r:6,fill:'var(--date)'},g));
+  if(showV&&mode==='sub'){el('line',{x1:60,y1:GY(5),x2:485,y2:GY(5),stroke:'var(--bad)','stroke-width':2.5,'stroke-dasharray':'8 6'},g);txt(GX(1.4),GY(5)-8,'Vmax',g,{fill:'var(--bad)','font-size':15,'text-anchor':'end'})}}
+function table(){if(!mode){$('tbl').innerHTML='';return}const M=MODES[mode];
+  let h='<tr><th>رقم التجربة</th>'+M.xs.map((_,i)=>`<th>${i+1}</th>`).join('')+'</tr><tr><th>'+M.xlabel+'</th>'+M.xs.map(x=>`<td>${x}</td>`).join('')+'</tr>';
+  h+='<tr><th>حجم O₂ بعد 30 s (mL)</th>'+M.xs.map((_,i)=>`<td class="${i===cur&&!running?'new':''}">${done.includes(i)?M.o2[i].toFixed(1):''}</td>`).join('')+'</tr>';
+  h+='<tr><th>المعدل الأولي (mL/min)</th>'+M.xs.map((_,i)=>`<td>${done.includes(i)?(M.o2[i]*2).toFixed(1):''}</td>`).join('')+'</tr>';$('tbl').innerHTML=h}
+function vals(){const M=MODES[mode];$('vals').innerHTML='';
+  M.xs.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.className='val'+(done.includes(i)?' done':'');b.textContent=(done.includes(i)?'✓ ':'')+x+' mL';
+    b.setAttribute('aria-pressed',i===cur&&!done.includes(i)?'true':'false');b.disabled=running||done.includes(i);
+    b.onclick=()=>{cur=i;t=0;vals();updApp();$('go').disabled=false;$('msg').textContent=`اخترت ${x} ${M.unit}. اضغط «ابدأ التفاعل».`};$('vals').appendChild(b)})}
+function start(){stage=0;mode=null;cur=-1;done=[];running=false;t=0;showV=false;$('runbar').hidden=true;setStep(0);drawApp();updApp();graph();table();
+  choiceSet('ماذا تريد أن تغيّر في التجربة؟',['تركيز الإنزيم (حجم مستخلص الكرفس)','تركيز المادة المتفاعلة (حجم بيروكسيد الهيدروجين)'],(i,b)=>{
+    b.classList.add('right');mode=i?'sub':'enz';drawApp();graph();table();setTimeout(control,500)});
+  $('msg').textContent='ابدأ باختيار العامل الذي تريد تغييره.'}
+function control(){const M=MODES[mode];setStep(1);
+  choiceSet(M.cq,M.copts,(i,b)=>{if(i){b.classList.add('wrong');say(0,M.cno[i]);return}
+    b.classList.add('right');say(1,M.cok);setTimeout(()=>{$('choose').hidden=true;$('runbar').hidden=false;setStep(2);
+      $('runask').textContent='اختر '+(mode==='enz'?'حجم مستخلص الكرفس':'حجم بيروكسيد الهيدروجين')+' لكل تجربة، ثم اضغط «ابدأ التفاعل»:';vals();
+      $('msg').textContent='أجرِ التجارب الخمس بأي ترتيب، ويسجّل الكاتب كل قراءة في الجدول.'},1600)})}
+function finish(){const M=MODES[mode];setStep(3);$('runbar').hidden=true;
+  choiceSet(M.fq,M.fopts.map(o=>o[0]),(i,b)=>{if(!M.fopts[i][1]){b.classList.add('wrong');say(0,M.fno);return}
+    b.classList.add('right');say(1,M.fok);if(mode==='sub'){showV=true;graph()}})}
+$('go').onclick=()=>{if(running||cur<0)return;running=true;t=0;$('go').disabled=true;vals();$('msg').textContent='بدأ التفاعل: تتحرر فقاعات الأكسجين…'};
+$('reset').onclick=start;
+function loop(now){const dt=Math.min(now-last,100);last=now;
+  if(running){t=Math.min(30,t+dt/1000*7.5);if(t>=30){running=false;done.push(cur);const M=MODES[mode];
+    $('msg').innerHTML=`بعد 30 ثانية: حجم الأكسجين <bdi dir="ltr">${M.o2[cur].toFixed(1)} mL</bdi>، فالمعدل الأولي = <bdi dir="ltr">${M.o2[cur].toFixed(1)} × 2 = ${(M.o2[cur]*2).toFixed(1)} mL/min</bdi>.`;
+    table();graph();vals();if(done.length===5)setTimeout(finish,900)}}
+  if(mode)updApp();bubbles(dt);requestAnimationFrame(loop)}
+start();last=performance.now();requestAnimationFrame(loop);
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script></body></html>
