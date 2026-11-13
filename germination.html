@@ -1,0 +1,186 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر إنبات البذور</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#eef3f0;--panel:#fff;--ink:#13261f;--muted:#5b6f66;--line:#cfdcd5;--palm:#0f6b5c;--palm-ink:#fff;--date:#b86e0f;--ok:#1f7a45;--ok-soft:#dcf1e3;--bad:#b3261e;--bad-soft:#f8dedb;
+ --glass:#eaf4f8;--glass-line:#7d97a3;--water:#9fd3ef;--ff:"Tajawal",Tahoma,"Segoe UI",sans-serif;--fd:"Reem Kufi","Tajawal",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;--glass:#1d3038;--glass-line:#7aa0ae;--water:#2f6f93;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;--glass:#1d3038;--glass-line:#7aa0ae;--water:#2f6f93;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff);direction:rtl;font-size:clamp(15px,1.5vw,20px);line-height:1.55;margin:0;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px}
+main{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+h1{font-family:var(--fd);color:var(--palm);margin:0;font-size:1.45em}
+.lead{color:var(--muted);margin:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps span{font-size:.8em;font-weight:800;border:1.5px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.steps span.now{border-color:var(--date);color:var(--date)}
+.steps span.done{border-color:var(--ok);color:var(--ok)}
+.tubes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:700px){.tubes{grid-template-columns:repeat(3,1fr)}}
+.tube{border:2px dashed var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:border-color .15s,background .15s;cursor:pointer}
+.tube.hot{border-color:var(--date);background:color-mix(in srgb,var(--date) 10%,transparent)}
+.tube.done{border-style:solid;border-color:var(--ok)}
+.tube .nm{font-family:var(--fd);font-size:1.5em;color:var(--palm);line-height:1}
+.tube .rq{font-size:.72em;font-weight:700;color:var(--muted);text-align:center;min-height:3.2em;line-height:1.4}
+.tube svg{width:100%;max-width:120px;height:auto}
+.tube .st{font-weight:800;font-size:.85em;min-height:1.5em}
+.tube .st.ok{color:var(--ok)}.tube .st.no{color:var(--bad)}
+.why{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.why button{font:800 .72em var(--ff);border:1.5px solid var(--palm);border-radius:99px;padding:3px 9px;background:transparent;color:var(--palm);cursor:pointer}
+.why button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.why button.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.palette{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{display:flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:12px;padding:6px 10px;background:var(--panel);font-weight:800;font-size:.85em;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.chip svg{width:30px;height:30px;flex:none}
+.chip.sel{border-color:var(--date);background:color-mix(in srgb,var(--date) 14%,transparent)}
+.chip.place{border-style:dashed}
+.ghost{position:fixed;pointer-events:none;z-index:50;opacity:.9;transform:translate(-50%,-50%) scale(1.08);box-shadow:0 6px 16px #0004}
+.btn{font:800 1em var(--ff);border:2px solid var(--palm);border-radius:12px;padding:10px 18px;background:transparent;color:var(--palm);cursor:pointer}
+.btn.main{background:var(--palm);color:var(--palm-ink)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible{outline:3px solid var(--date);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.msg{font-weight:800;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--palm) 10%,transparent);color:var(--palm);min-height:2.6em}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}.msg.no{background:var(--bad-soft);color:var(--bad)}
+.day{font-family:var(--fd);font-size:1.2em;color:var(--date);text-align:center;min-height:1.4em}
+.q{font:800 .95em var(--ff);text-align:right;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:transparent;color:var(--ink);cursor:pointer;width:100%}
+.q.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}.q.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.qopts{display:grid;gap:8px}
+h2{font-size:1em;margin:0 0 8px;color:var(--palm);font-weight:800}
+</style></head><body>
+<main>
+<header><h1>مختبر إنبات البذور</h1>
+<p class="lead">جهّز الأنابيب الخمس كما في كتابك (النشاط 3-4، ص 62): اسحب كل شيء إلى أنبوبته، ثم اترك البذور يوماً واحداً وشاهد أي البذور تنبت.</p></header>
+<div class="steps" id="steps"><span>1. جهّز الأنابيب</span><span>2. مرّ يوم واحد</span><span>3. لماذا لم تنبت؟</span><span>4. السؤال الأخير</span></div>
+<section class="panel"><div class="tubes" id="tubes"></div><div class="day" id="day"></div></section>
+<section class="panel" id="palPanel"><h2>اسحب إلى الأنبوبة (أو المس الشيء ثم المس الأنبوبة)</h2><div class="palette" id="pal"></div></section>
+<div class="msg" id="msg" role="status" aria-live="polite">ابدأ بالأنبوبة (أ): اسحب إليها القطن الرطب، ثم بذور الطماطم، ثم مكانها.</div>
+<div class="row"><button class="btn main" id="go" disabled>⏩ مرّ يوم واحد</button><button class="btn" id="reset">↺ ابدأ من جديد</button></div>
+<section class="panel" id="qbox" hidden><h2>السؤال الأخير: ما الظروف الثلاثة اللازمة لإنبات بذور الطماطم؟</h2><div class="qopts" id="qopts"></div><div class="msg" id="qmsg" hidden style="margin-top:8px"></div></section>
+</main>
+<script>
+(()=>{
+const $=s=>document.querySelector(s),NS='http://www.w3.org/2000/svg';
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PLACES={light:{n:'مكان دافئ ومضيء',ic:'☀️',t:'25 °C'},fridge:{n:'الثلاجة (بارد ومظلم)',ic:'❄️',t:'4 °C'},dark:{n:'خزانة دافئة ومظلمة',ic:'🌑',t:'25 °C'}};
+const T=[
+ {id:'أ',cotton:'wet',place:'light',rq:'قطن رطب · دافئ ومضيء'},
+ {id:'ب',cotton:'wet',place:'fridge',rq:'قطن رطب · الثلاجة (بارد ومظلم)'},
+ {id:'ج',cotton:'wet',place:'dark',rq:'قطن رطب · خزانة دافئة ومظلمة'},
+ {id:'د',cotton:'dry',place:'light',rq:'قطن جاف · دافئ ومضيء'},
+ {id:'هـ',cotton:'wet',place:'light',ab:true,rq:'قطن رطب · مسحوق ماص للأكسجين · سدادة · دافئ ومضيء'}];
+const GROWS={'أ':true,'ج':true};
+const WHY={'ب':'heat','د':'water','هـ':'oxy'};
+const WHYN={water:'الماء',oxy:'الأكسجين',heat:'الدفء',light:'الضوء'};
+const ITEMS=[['wet','قطن رطب'],['dry','قطن جاف'],['seeds','بذور طماطم'],['abs','مسحوق ماص للأكسجين'],['stop','سدادة مطاطية'],['light','☀️ دافئ ومضيء'],['fridge','❄️ الثلاجة'],['dark','🌑 خزانة دافئة مظلمة']];
+let S,grow=0,phase=0,sel=null,solved={};
+function reset(){S={};T.forEach(t=>S[t.id]={cotton:null,seeds:false,abs:false,stop:false,place:null});grow=0;phase=0;solved={};sel=null;
+ $('#go').disabled=true;$('#qbox').hidden=true;$('#day').textContent='';$('#palPanel').hidden=false;
+ say('ابدأ بالأنبوبة (أ): اسحب إليها القطن الرطب، ثم بذور الطماطم، ثم مكانها.');buildPal();render();steps(0)}
+function steps(n){[...$('#steps').children].forEach((s,i)=>s.className=i<n?'done':i===n?'now':'')}
+function say(t,c=''){const m=$('#msg');m.textContent=t;m.className='msg '+c}
+function el(tag,at,p){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);p&&p.appendChild(e);return e}
+// أيقونات
+function icon(type){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 30 30');
+ if(type==='wet'||type==='dry'){cotton(s,15,17,11,type==='wet')}
+ else if(type==='seeds'){[[10,15],[17,12],[19,19],[12,21]].forEach(([x,y])=>el('ellipse',{cx:x,cy:y,rx:3.4,ry:2.4,fill:'#e2c48a',stroke:'#a8874b','stroke-width':.8},s))}
+ else if(type==='abs'){el('rect',{x:6,y:6,width:18,height:18,rx:3,fill:'#f0ebe0',stroke:'#999'},s);for(let k=0;k<22;k++)el('circle',{cx:9+Math.random()*12,cy:12+Math.random()*9,r:1.1,fill:'#444'},s)}
+ else if(type==='stop'){el('path',{d:'M7,8 L23,8 L21,22 L9,22 Z',fill:'#8e2b2b'},s)}
+ else{const p=PLACES[type];const t=el('text',{x:15,y:20,'text-anchor':'middle','font-size':18},s);t.textContent=p.ic}
+ return s}
+function cotton(p,cx,cy,r,wet){const g=el('g',{},p);[[0,0,1],[-.6,.2,.75],[.6,.25,.75],[-.3,-.45,.7],[.35,-.4,.7]].forEach(([dx,dy,k])=>el('circle',{cx:cx+dx*r,cy:cy+dy*r,r:r*.55*k,fill:wet?'#e7f3fb':'#ffffff',stroke:wet?'#8fbfdc':'#c9c9c9','stroke-width':.8},g));
+ if(wet)[[-.4,.1],[.3,-.1],[.1,.35]].forEach(([dx,dy])=>el('path',{d:`M${cx+dx*r},${cy+dy*r-2} q1.6,2.2 0,3.4 q-1.6,-1.2 0,-3.4`,fill:'#3b9be0'},g));return g}
+function buildPal(){const pal=$('#pal');pal.innerHTML='';ITEMS.forEach(([k,n])=>{const c=document.createElement('div');c.className='chip'+(PLACES[k]?' place':'');c.dataset.k=k;c.setAttribute('role','button');c.setAttribute('tabindex','0');
+ if(!PLACES[k])c.appendChild(icon(k));const sp=document.createElement('span');sp.textContent=n;c.appendChild(sp);pal.appendChild(c);drag(c)})}
+// رسم الأنبوبة
+function tubeSVG(t,st){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 120 290');
+ el('rect',{x:30,y:6,width:60,height:12,rx:4,fill:'none'},s);
+ const body='M34,20 L34,240 Q34,276 60,276 Q86,276 86,240 L86,20';
+ const cp=el('clipPath',{id:'c'+t.id},el('defs',{},s));el('path',{d:body+' Z'},cp);
+ el('path',{d:body+' Z',fill:css('--glass')},s);
+ const g=el('g',{'clip-path':`url(#c${t.id})`},s);
+ if(st.cotton==='wet'&&!st.abs)el('rect',{x:30,y:226,width:60,height:60,fill:css('--water'),opacity:.85},g);
+ if(st.abs){el('rect',{x:30,y:236,width:60,height:50,fill:'#3d3d3d'},g);for(let k=0;k<40;k++)el('circle',{cx:34+((k*37)%52),cy:240+((k*53)%34),r:1.2,fill:'#777'},g)}
+ // قاعدة الشاش
+ el('line',{x1:34,y1:212,x2:86,y2:212,stroke:'#b9a67a','stroke-width':4,'stroke-dasharray':'3 2'},s);
+ if(st.cotton){[44,60,76].forEach((x,i)=>cotton(s,x,196-(i%2)*4,13,st.cotton==='wet'))}
+ if(st.seeds){const sd=[[48,182],[60,178],[72,183]];
+  sd.forEach(([x,y])=>{if(grow>0&&GROWS[t.id]){const h=grow*42;
+    el('path',{d:`M${x},${y+2} q-3,${12*grow} 1,${24*grow}`,stroke:'#f4f1e6','stroke-width':2.2,fill:'none'},s);
+    el('path',{d:`M${x},${y} q4,${-h*.5} 0,${-h}`,stroke:'#4c9a3c','stroke-width':3,fill:'none','stroke-linecap':'round'},s);
+    if(grow>.55){const ly=y-h;el('ellipse',{cx:x-6,cy:ly,rx:7*grow,ry:3.5*grow,fill:'#5cb848',transform:`rotate(-25 ${x-6} ${ly})`},s);el('ellipse',{cx:x+6,cy:ly,rx:7*grow,ry:3.5*grow,fill:'#5cb848',transform:`rotate(25 ${x+6} ${ly})`},s)}}
+   el('ellipse',{cx:x,cy:y,rx:5,ry:3.4,fill:'#e2c48a',stroke:'#a8874b','stroke-width':1},s)})}
+ el('path',{d:body,fill:'none',stroke:css('--glass-line'),'stroke-width':3},s);
+ el('path',{d:'M28,20 L92,20',stroke:css('--glass-line'),'stroke-width':4,'stroke-linecap':'round'},s);
+ if(st.stop)el('path',{d:'M30,2 L90,2 L86,30 L34,30 Z',fill:'#8e2b2b'},s);
+ if(st.place){const p=PLACES[st.place];const bg=el('rect',{x:6,y:250,width:30,height:34,rx:6,fill:css('--panel'),stroke:css('--line')},s);
+  const tx=el('text',{x:21,y:266,'text-anchor':'middle','font-size':14},s);tx.textContent=p.ic;
+  const tt=el('text',{x:21,y:280,'text-anchor':'middle','font-size':8,'font-weight':800,fill:p.t==='4 °C'?'#2a6fdb':'#c2410c',direction:'ltr'},s);tt.textContent=p.t}
+ return s}
+function complete(t){const st=S[t.id];return st.cotton===t.cotton&&st.seeds&&st.place===t.place&&(!t.ab||(st.abs&&st.stop))}
+function render(){const box=$('#tubes');box.innerHTML='';
+ T.forEach(t=>{const st=S[t.id],d=document.createElement('div');d.className='tube'+(complete(t)?' done':'');d.dataset.t=t.id;
+  d.innerHTML=`<div class="nm">(${t.id})</div><div class="rq">${t.rq}</div>`;d.appendChild(tubeSVG(t,st));
+  const s=document.createElement('div');s.className='st';
+  if(phase>=1){if(GROWS[t.id]){s.textContent='🌱 نبتت';s.classList.add('ok')}else{s.textContent='✘ لم تنبت';s.classList.add('no')}}
+  else if(complete(t))s.textContent='✔ جاهزة';
+  if(st.place&&phase===0)s.textContent=(complete(t)?'✔ ':'')+PLACES[st.place].n;
+  d.appendChild(s);
+  if(phase>=1&&WHY[t.id]){const w=document.createElement('div');w.className='why';
+   if(solved[t.id]){w.innerHTML=`<button class="ok">${WHYN[WHY[t.id]]} ✔</button>`}
+   else{w.innerHTML='<div style="width:100%;text-align:center;font-size:.7em;font-weight:800;color:var(--muted)">ما الظرف الناقص؟</div>';
+    ['water','oxy','heat','light'].forEach(k=>{const b=document.createElement('button');b.textContent=WHYN[k];b.onclick=e=>{e.stopPropagation();why(t.id,k,b)};w.appendChild(b)})}
+   d.appendChild(w)}
+  d.addEventListener('click',()=>{if(sel&&phase===0){put(sel,t.id);sel=null;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'))}});
+  box.appendChild(d)});
+ $('#go').disabled=!(phase===0&&T.every(complete));
+}
+function put(k,id){const t=T.find(x=>x.id===id),st=S[id];
+ if(k==='wet'||k==='dry'){if(k!==t.cotton)return say(`الأنبوبة (${id}) تحتاج قطناً ${t.cotton==='wet'?'رطباً':'جافاً'}.`,'no');st.cotton=k;say(`أحسنت. أضف الآن بذور الطماطم إلى الأنبوبة (${id}).`,'ok')}
+ else if(k==='seeds'){if(!st.cotton)return say('ضع القطن أولاً، ثم البذور فوقه.','no');st.seeds=true;say(t.ab&&!st.abs?'أضف المسحوق الماص للأكسجين والسدادة، ثم المكان.':`ضع الأنبوبة (${id}) في مكانها: ${PLACES[t.place].n}.`,'ok')}
+ else if(k==='abs'){if(!t.ab)return say('المسحوق الماص للأكسجين للأنبوبة (هـ) فقط.','no');st.abs=true;say('أحسنت. أغلق الأنبوبة (هـ) بالسدادة حتى لا يدخل الهواء.','ok')}
+ else if(k==='stop'){if(!t.ab)return say('السدادة للأنبوبة (هـ) فقط؛ بقية الأنابيب مفتوحة للهواء.','no');st.stop=true;say('أحسنت. ضع الأنبوبة (هـ) في مكان دافئ ومضيء.','ok')}
+ else{if(k!==t.place)return say(`الأنبوبة (${id}) توضع في ${PLACES[t.place].n}.`,'no');st.place=k;
+  const nx=T.find(x=>!complete(x)&&x.id!==id);say(complete(t)?(T.every(complete)?'جهزت الأنابيب الخمس! اضغط «مرّ يوم واحد».':`الأنبوبة (${id}) جاهزة. انتقل إلى الأنبوبة (${(T.find(x=>!complete(x))||{}).id}).`):'أكمل محتويات الأنبوبة.','ok')}
+ render();if(T.every(complete))steps(1)}
+// السحب
+function drag(c){let g=null,moved=false,x0=0,y0=0,hot=null;
+ c.addEventListener('pointerdown',e=>{if(phase!==0)return;e.preventDefault();c.setPointerCapture(e.pointerId);moved=false;x0=e.clientX;y0=e.clientY});
+ c.addEventListener('pointermove',e=>{if(!c.hasPointerCapture(e.pointerId))return;
+  if(!moved&&Math.hypot(e.clientX-x0,e.clientY-y0)>6){moved=true;g=c.cloneNode(true);g.classList.add('ghost');document.body.appendChild(g)}
+  if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';const u=document.elementFromPoint(e.clientX,e.clientY);const tb=u&&u.closest('.tube');
+   if(hot&&hot!==tb)hot.classList.remove('hot');if(tb){tb.classList.add('hot');hot=tb}}});
+ c.addEventListener('pointerup',e=>{if(!c.hasPointerCapture(e.pointerId))return;c.releasePointerCapture(e.pointerId);if(hot)hot.classList.remove('hot');
+  if(g){g.remove();g=null;const u=document.elementFromPoint(e.clientX,e.clientY);const tb=u&&u.closest('.tube');if(tb)put(c.dataset.k,tb.dataset.t)}
+  else{const was=c.classList.contains('sel');document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));if(!was){c.classList.add('sel');sel=c.dataset.k;say('الآن المس الأنبوبة التي تريد وضعه فيها.')}else sel=null}});
+ c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const was=c.classList.contains('sel');document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));if(!was){c.classList.add('sel');sel=c.dataset.k}else sel=null}});
+}
+// مرور يوم
+$('#go').onclick=()=>{if(phase!==0||!T.every(complete))return;phase=0.5;$('#go').disabled=true;$('#palPanel').hidden=true;say('مرّ الوقت... راقبوا البذور.');
+ const dur=RM?600:2600,t0=performance.now();
+ const step=n=>{const p=Math.min(1,(n-t0)/dur);grow=p;$('#day').textContent=p<1?`⏳ ${Math.round(p*24)} ساعة`:'📅 بعد يوم واحد تقريباً';render();
+  if(p<1)requestAnimationFrame(step);else{phase=1;render();steps(2);say('نبتت بذور (أ) و(ج) فقط. اختر الظرف الناقص تحت كل أنبوبة لم تنبت بذورها: (ب) و(د) و(هـ).')}};
+ requestAnimationFrame(step)};
+function why(id,k,b){const right=WHY[id];
+ if(k===right){solved[id]=true;const m={'ب':'صحيح! البرودة في الثلاجة منعت الإنبات: البذور تحتاج درجة حرارة مناسبة.','د':'صحيح! القطن جاف: البذور تحتاج الماء لتنبت.','هـ':'صحيح! المسحوق امتص الأكسجين والسدادة منعت دخول الهواء: البذور تحتاج الأكسجين.'};
+  say(m[id],'ok');render();if(Object.keys(solved).length===3){steps(3);$('#qbox').hidden=false;showQ();say('أحسنتم! أجيبوا عن السؤال الأخير.','ok')}return}
+ b.classList.add('no');
+ const R={light:'الأنبوبة (ج) في الظلام ونبتت بذورها، فالضوء ليس السبب.',
+  'ب-water':'قطن الأنبوبة (ب) رطب، فالماء متوفر.','ب-oxy':'الأنبوبة (ب) مفتوحة، فالأكسجين متوفر.',
+  'د-heat':'الأنبوبة (د) في مكان دافئ.','د-oxy':'الأنبوبة (د) مفتوحة، فالأكسجين متوفر.',
+  'هـ-water':'قطن الأنبوبة (هـ) رطب، فالماء متوفر.','هـ-heat':'الأنبوبة (هـ) في مكان دافئ.'};
+ say(k==='light'?R.light:R[id+'-'+k],'no')}
+function showQ(){const o=[['الماء والضوء والتربة','لم نستخدم تربة، والأنبوبة (ج) نبتت في الظلام.'],['الماء والأكسجين ودرجة الحرارة المناسبة',''],['الضوء والأكسجين والدفء','الأنبوبة (ج) نبتت في الظلام، والأنبوبة (د) لم تنبت بلا ماء.']];
+ const box=$('#qopts');box.innerHTML='';let done=false;
+ o.forEach(([t,w],i)=>{const b=document.createElement('button');b.className='q';b.textContent=t;b.onclick=()=>{if(done)return;const m=$('#qmsg');m.hidden=false;
+  if(i===1){done=true;b.classList.add('ok');m.className='msg ok';m.textContent='صحيح! وبمقارنة (أ) و(ج): الضوء ليس لازماً للإنبات. سجّلوا الاستنتاج في ورقة العمل.';steps(4)}
+  else{b.classList.add('no');m.className='msg no';m.textContent=w}};box.appendChild(b)})}
+$('#reset').onclick=reset;
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+reset();
+})();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script></body></html>
