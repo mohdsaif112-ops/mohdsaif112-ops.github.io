@@ -17,7 +17,7 @@ h1{font-family:var(--fd);color:var(--palm);margin:0;font-size:1.45em}
 .steps span{font-size:.8em;font-weight:800;border:1.5px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
 .steps span.now{border-color:var(--date);color:var(--date)}
 .steps span.done{border-color:var(--ok);color:var(--ok)}
-.tubes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.tubes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 @media (max-width:700px){.tubes{grid-template-columns:repeat(3,1fr)}}
 .tube{border:2px dashed var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:border-color .15s,background .15s;cursor:pointer}
 .tube.hot{border-color:var(--date);background:color-mix(in srgb,var(--date) 10%,transparent)}
@@ -57,91 +57,84 @@ h2{font-size:1em;margin:0 0 8px;color:var(--palm);font-weight:800}
 </style></head><body>
 <main>
 <header><h1>مختبر إنبات البذور</h1>
-<p class="lead">أنت العالِم: <b>①</b> اسحب إلى أي أنبوبة ما تريد (قطن، ماء، بذور، مسحوق، سدادة) &nbsp; <b>②</b> اضبط حرارة كل أنبوبة وضوءها &nbsp; <b>③</b> اضغط «مرّ يوم واحد» وشاهد التأثير.</p></header>
-<div class="steps" id="steps"><span>1. أضف ما تريد</span><span>2. اضبط الحرارة والضوء</span><span>3. مرّ يوم وشاهد</span><span>4. لماذا لم تنبت؟</span><span>5. السؤال الأخير</span></div>
+<p class="lead">النشاط 3-4 (ص 62): <b>①</b> كوّن الأنابيب الخمس (أ - هـ) بالسحب كما في كتابك &nbsp; <b>②</b> اضغط «مرّ يوم واحد» وشاهد النتائج &nbsp; <b>③</b> أجب عن أسئلة ورقة العمل.</p></header>
+<div class="steps" id="steps"><span>1. كوّن الأنابيب</span><span>2. مرّ يوم وشاهد</span><span>3. الظرف الناقص</span><span>4. أسئلة الورقة</span></div>
 <section class="panel"><div class="tubes" id="tubes"></div><div class="day" id="day"></div></section>
-<section class="panel" id="palPanel"><h2>اسحب إلى أي أنبوبة (أو المس الشيء ثم المس الأنبوبة)</h2><div class="palette" id="pal"></div>
- <div style="text-align:center;margin-top:8px"><button class="btn" id="bookBtn" style="font-size:.8em;padding:6px 12px">📖 فكرة من الكتاب (اختياري)</button><div id="book" hidden style="font-size:.8em;font-weight:700;color:var(--muted);margin-top:6px;line-height:1.8">(أ) قطن + ماء · 25 °C · مضيء &nbsp;|&nbsp; (ب) قطن + ماء · 4 °C · مظلم (الثلاجة) &nbsp;|&nbsp; (ج) قطن + ماء · 25 °C · مظلم &nbsp;|&nbsp; (د) قطن بلا ماء · 25 °C · مضيء &nbsp;|&nbsp; (هـ) قطن + ماء + مسحوق ماص للأكسجين + سدادة · 25 °C · مضيء</div></div></section>
+<section class="panel" id="palPanel"><h2>اسحب إلى الأنبوبة (أو المس الشيء ثم المس الأنبوبة)</h2><div class="palette" id="pal"></div></section>
 <div class="msg" id="msg" role="status" aria-live="polite"></div>
-<div class="row"><button class="btn main" id="go" disabled>⏩ مرّ يوم واحد</button><button class="btn" id="edit" hidden>✏️ عدّل وجرّب مرة أخرى</button><button class="btn" id="reset">↺ ابدأ من جديد</button></div>
-<section class="panel" id="qbox" hidden><h2>السؤال الأخير: ما الظروف الثلاثة اللازمة لإنبات بذور الطماطم؟</h2><div class="qopts" id="qopts"></div><div class="msg" id="qmsg" hidden style="margin-top:8px"></div></section>
+<div class="row"><button class="btn main" id="go" disabled>⏩ مرّ يوم واحد</button><button class="btn" id="edit" hidden>✏️ عدّل الأنابيب</button><button class="btn" id="reset">↺ ابدأ من جديد</button></div>
+<section class="panel" id="qbox" hidden><h2 id="qt"></h2><div class="qopts" id="qopts"></div><div class="msg" id="qmsg" hidden style="margin-top:8px"></div><div class="row" style="margin-top:8px"><button class="btn main" id="qnext" hidden>السؤال التالي ←</button></div></section>
 </main>
 <script>
 (()=>{
 const $=s=>document.querySelector(s),NS='http://www.w3.org/2000/svg';
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const IDS=['أ','ب','ج','د','هـ','و'];
+const PLACES={light:{n:'مكان دافئ ومضيء',ic:'☀️',t:'25 °C',warm:true},fridge:{n:'الثلاجة (بارد ومظلم)',ic:'❄️',t:'4 °C',warm:false},dark:{n:'خزانة دافئة ومظلمة',ic:'🌑',t:'25 °C',warm:true}};
+const IDS=['أ','ب','ج','د','هـ'];
+// تجهيز الكتاب (الشكل في ص 62)
+const BOOK={'أ':{base:'water',cotton:'wet',top:'plug',place:'light',t:'قطن رطب · ماء · دافئ ومضيء'},
+ 'ب':{base:'water',cotton:'wet',top:'plug',place:'fridge',t:'قطن رطب · ماء · الثلاجة (بارد ومظلم)'},
+ 'ج':{base:'water',cotton:'wet',top:'plug',place:'dark',t:'قطن رطب · ماء · خزانة دافئة ومظلمة'},
+ 'د':{base:null,cotton:'dry',top:'plug',place:'light',t:'قطن جاف · دافئ ومضيء'},
+ 'هـ':{base:'abs',cotton:'wet',top:'stop',place:'light',t:'قطن رطب · مسحوق ماص للأكسجين · سدادة مطاطية · دافئ ومضيء'}};
 const WHYN={water:'الماء',oxy:'الأكسجين',heat:'الدفء',light:'الضوء'};
-const ITEMS=[['cotton','قطن'],['water','💧 ماء'],['seeds','بذور طماطم'],['abs','مسحوق ماص للأكسجين'],['stop','سدادة مطاطية']];
-const COLD=10;
-let S,grow=0,phase=0,sel=null,solved={},asked=false;
-const empty=()=>({cotton:false,water:false,seeds:0,abs:false,stop:false,temp:25,light:true,touched:false});
-function reset(){S={};IDS.forEach(i=>S[i]=empty());grow=0;phase=0;solved={};sel=null;asked=false;
+const ITEMS=[['water','💧 ماء (في القاع)'],['abs','مسحوق ماص للأكسجين (في القاع)'],['wet','قطن رطب'],['dry','قطن جاف'],['seeds','بذور طماطم'],['plug','سدادة قطن (فوق)'],['stop','سدادة مطاطية (فوق)'],['light','☀️ دافئ ومضيء'],['fridge','❄️ الثلاجة'],['dark','🌑 خزانة دافئة مظلمة']];
+let S,grow=0,phase=0,sel=null,solved={},qi=0;
+const empty=()=>({base:null,cotton:null,seeds:false,top:null,place:null});
+function reset(){S={};IDS.forEach(i=>S[i]=empty());grow=0;phase=0;solved={};sel=null;qi=0;
  $('#qbox').hidden=true;$('#day').textContent='';$('#palPanel').hidden=false;$('#edit').hidden=true;
- say('الأنابيب فارغة. ابدأ بأي أنبوبة: اسحب إليها القطن، ثم الماء إن أردت، ثم البذور.');buildPal();render();steps(0)}
+ say('كوّن الأنبوبة (أ) كما في كتابك: اسحب الماء إلى القاع، ثم القطن الرطب، ثم البذور، ثم سدادة القطن، ثم مكانها.');buildPal();render();steps(0)}
 function steps(n){[...$('#steps').children].forEach((s,i)=>s.className=i<n?'done':i===n?'now':'')}
 function say(t,c=''){const m=$('#msg');m.textContent=t;m.className='msg '+c}
 function el(tag,at,p){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);p&&p.appendChild(e);return e}
 function cotton(p,cx,cy,r,wet){const g=el('g',{},p);[[0,0,1],[-.6,.2,.75],[.6,.25,.75],[-.3,-.45,.7],[.35,-.4,.7]].forEach(([dx,dy,k])=>el('circle',{cx:cx+dx*r,cy:cy+dy*r,r:r*.55*k,fill:wet?'#e7f3fb':'#ffffff',stroke:wet?'#8fbfdc':'#c9c9c9','stroke-width':.8},g));
  if(wet)[[-.4,.1],[.3,-.1],[.1,.35]].forEach(([dx,dy])=>el('path',{d:`M${cx+dx*r},${cy+dy*r-2} q1.6,2.2 0,3.4 q-1.6,-1.2 0,-3.4`,fill:'#3b9be0'},g));return g}
 function icon(type){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 30 30');
- if(type==='cotton')cotton(s,15,17,11,false);
+ if(type==='wet'||type==='dry'||type==='plug')cotton(s,15,17,11,type==='wet');
  else if(type==='water'){el('path',{d:'M12,3 h6 v8 l3,4 v12 h-12 v-12 l3,-4 z',fill:'#dceefa',stroke:'#7d97a3'},s);el('rect',{x:9.5,y:18,width:11,height:8.5,fill:'#5aa9e6'},s)}
  else if(type==='seeds')[[10,15],[17,12],[19,19],[12,21]].forEach(([x,y])=>el('ellipse',{cx:x,cy:y,rx:3.4,ry:2.4,fill:'#e2c48a',stroke:'#a8874b','stroke-width':.8},s));
  else if(type==='abs'){el('rect',{x:6,y:6,width:18,height:18,rx:3,fill:'#f0ebe0',stroke:'#999'},s);for(let k=0;k<22;k++)el('circle',{cx:9+((k*7)%12),cy:12+((k*5)%9),r:1.1,fill:'#444'},s)}
  else if(type==='stop')el('path',{d:'M7,8 L23,8 L21,22 L9,22 Z',fill:'#8e2b2b'},s);
  return s}
-function buildPal(){const pal=$('#pal');pal.innerHTML='';ITEMS.forEach(([k,n])=>{const c=document.createElement('div');c.className='chip';c.dataset.k=k;c.setAttribute('role','button');c.setAttribute('tabindex','0');
- if(k!=='water')c.appendChild(icon(k));else c.appendChild(icon('water'));const sp=document.createElement('span');sp.textContent=n.replace('💧 ','');c.appendChild(sp);pal.appendChild(c);drag(c)})}
-// النتيجة تتبع ما وضعه الطالب
-const wet=st=>st.cotton&&st.water;
-function missing(st){const m=[];if(!wet(st))m.push('water');if(st.abs&&st.stop)m.push('oxy');if(st.temp<COLD)m.push('heat');return m}
-const used=st=>st.seeds>0;
-function tubeSVG(id,st,grows){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 130 290');
- if(!st.light)el('rect',{x:0,y:0,width:130,height:290,rx:12,fill:'#1d2430',opacity:.82},s);
- const body='M44,20 L44,240 Q44,276 70,276 Q96,276 96,240 L96,20';
+function buildPal(){const pal=$('#pal');pal.innerHTML='';ITEMS.forEach(([k,n])=>{const c=document.createElement('div');c.className='chip'+(PLACES[k]?' place':'');c.dataset.k=k;c.setAttribute('role','button');c.setAttribute('tabindex','0');
+ if(!PLACES[k])c.appendChild(icon(k));const sp=document.createElement('span');sp.textContent=n.replace('💧 ','');c.appendChild(sp);pal.appendChild(c);drag(c)})}
+// النتيجة تتبع ما كوّنه الطالب
+function missing(st){const m=[];if(st.cotton!=='wet')m.push('water');if(st.base==='abs'&&st.top==='stop')m.push('oxy');if(!PLACES[st.place].warm)m.push('heat');return m}
+const used=st=>st.seeds&&st.place;
+const asBook=id=>{const b=BOOK[id],st=S[id];return st.base===b.base&&st.cotton===b.cotton&&st.top===b.top&&st.place===b.place&&st.seeds};
+function tubeSVG(id,st,grows){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 120 290');
+ const body='M34,30 L34,240 Q34,276 60,276 Q86,276 86,240 L86,30';
  const cp=el('clipPath',{id:'c'+id},el('defs',{},s));el('path',{d:body+' Z'},cp);
  el('path',{d:body+' Z',fill:css('--glass')},s);
  const g=el('g',{'clip-path':`url(#c${id})`},s);
- if(st.water&&!st.abs)el('rect',{x:40,y:226,width:60,height:60,fill:css('--water'),opacity:.85},g);
- if(st.abs){el('rect',{x:40,y:236,width:60,height:50,fill:'#3d3d3d'},g);for(let k=0;k<40;k++)el('circle',{cx:44+((k*37)%52),cy:240+((k*53)%34),r:1.2,fill:'#777'},g)}
- el('line',{x1:44,y1:212,x2:96,y2:212,stroke:'#b9a67a','stroke-width':4,'stroke-dasharray':'3 2'},s);
- if(st.cotton)[54,70,86].forEach((x,i)=>cotton(s,x,196-(i%2)*4,13,wet(st)));
- const pos=[[58,0],[70,-4],[82,1],[64,6],[77,5],[70,9]].slice(0,Math.min(6,st.seeds));
- const base=st.cotton?182:206,h0=st.temp>=20?42:30;
- pos.forEach(([x,dy])=>{const y=base+dy;
-  if(grow>0&&grows){const h=grow*h0;
-   el('path',{d:`M${x},${y+2} q-3,${12*grow} 1,${24*grow}`,stroke:'#f4f1e6','stroke-width':2.2,fill:'none'},s);
-   el('path',{d:`M${x},${y} q4,${-h*.5} 0,${-h}`,stroke:'#4c9a3c','stroke-width':3,fill:'none','stroke-linecap':'round'},s);
-   if(grow>.55){const ly=y-h,c='#5cb848';el('ellipse',{cx:x-6,cy:ly,rx:7*grow,ry:3.5*grow,fill:c,transform:`rotate(-25 ${x-6} ${ly})`},s);el('ellipse',{cx:x+6,cy:ly,rx:7*grow,ry:3.5*grow,fill:c,transform:`rotate(25 ${x+6} ${ly})`},s)}}
-  el('ellipse',{cx:x,cy:y,rx:5,ry:3.4,fill:'#e2c48a',stroke:'#a8874b','stroke-width':1},s)});
+ if(st.base==='water')el('rect',{x:30,y:226,width:60,height:60,fill:css('--water'),opacity:.85},g);
+ if(st.base==='abs'){el('rect',{x:30,y:236,width:60,height:50,fill:'#3d3d3d'},g);for(let k=0;k<40;k++)el('circle',{cx:34+((k*37)%52),cy:240+((k*53)%34),r:1.2,fill:'#777'},g)}
+ el('line',{x1:34,y1:212,x2:86,y2:212,stroke:'#b9a67a','stroke-width':4,'stroke-dasharray':'3 2'},s);
+ if(st.cotton)[44,60,76].forEach((x,i)=>cotton(s,x,196-(i%2)*4,13,st.cotton==='wet'));
+ if(st.seeds){const base=st.cotton?180:206;[[48,base+2],[60,base-2],[72,base+3]].forEach(([x,y])=>{
+   if(grow>0&&grows){const h=grow*42;
+    el('path',{d:`M${x},${y+2} q-3,${12*grow} 1,${24*grow}`,stroke:'#f4f1e6','stroke-width':2.2,fill:'none'},s);
+    el('path',{d:`M${x},${y} q4,${-h*.5} 0,${-h}`,stroke:'#4c9a3c','stroke-width':3,fill:'none','stroke-linecap':'round'},s);
+    if(grow>.55){const ly=y-h;el('ellipse',{cx:x-6,cy:ly,rx:7*grow,ry:3.5*grow,fill:'#5cb848',transform:`rotate(-25 ${x-6} ${ly})`},s);el('ellipse',{cx:x+6,cy:ly,rx:7*grow,ry:3.5*grow,fill:'#5cb848',transform:`rotate(25 ${x+6} ${ly})`},s)}}
+   el('ellipse',{cx:x,cy:y,rx:5,ry:3.4,fill:'#e2c48a',stroke:'#a8874b','stroke-width':1},s)})}
  el('path',{d:body,fill:'none',stroke:css('--glass-line'),'stroke-width':3},s);
- el('path',{d:'M38,20 L102,20',stroke:css('--glass-line'),'stroke-width':4,'stroke-linecap':'round'},s);
- if(st.stop)el('path',{d:'M40,2 L100,2 L96,30 L44,30 Z',fill:'#8e2b2b'},s);
- // ميزان حرارة صغير
- const th=150,ty=95,col=Math.max(0,st.temp)/35*th;
- el('rect',{x:12,y:ty,width:12,height:th+8,rx:6,fill:'#fff',stroke:'#888','stroke-width':1.3},s);
- el('rect',{x:15.5,y:ty+th+4-col,width:5,height:col+4,fill:st.temp<COLD?'#2a6fdb':'#d6336c'},s);
- el('circle',{cx:18,cy:ty+th+14,r:9,fill:st.temp<COLD?'#2a6fdb':'#d6336c',stroke:'#888','stroke-width':1.3},s);
- const tt=el('text',{x:18,y:ty-8,'text-anchor':'middle','font-size':12,'font-weight':800,fill:st.light?css('--ink'):'#fff',direction:'ltr'},s);tt.textContent=st.temp+'°C';
- const lt=el('text',{x:116,y:40,'text-anchor':'middle','font-size':18},s);lt.textContent=st.light?'💡':'🌑';
+ el('path',{d:'M28,30 L92,30',stroke:css('--glass-line'),'stroke-width':4,'stroke-linecap':'round'},s);
+ if(st.top==='plug'){[46,60,74].forEach((x,i)=>cotton(s,x,26-(i%2)*3,12,false))}
+ if(st.top==='stop')el('path',{d:'M30,10 L90,10 L86,40 L34,40 Z',fill:'#8e2b2b'},s);
+ if(st.place){const p=PLACES[st.place];el('rect',{x:4,y:248,width:30,height:36,rx:6,fill:css('--panel'),stroke:css('--line')},s);
+  const tx=el('text',{x:19,y:264,'text-anchor':'middle','font-size':14},s);tx.textContent=p.ic;
+  const tt=el('text',{x:19,y:279,'text-anchor':'middle','font-size':8,'font-weight':800,fill:p.warm?'#c2410c':'#2a6fdb',direction:'ltr'},s);tt.textContent=p.t}
  return s}
-function desc(st){const a=[];if(st.cotton)a.push(wet(st)?'قطن رطب':'قطن جاف');else if(st.water)a.push('ماء بلا قطن');if(st.abs)a.push('مسحوق');if(st.stop)a.push('سدادة');return a.join(' · ')||'فارغة'}
 function render(){const box=$('#tubes');box.innerHTML='';
  IDS.forEach(id=>{const st=S[id],u=used(st),mi=u?missing(st):[],grows=u&&mi.length===0;
-  const d=document.createElement('div');d.className='tube'+(phase>=1&&u?' done':'');d.dataset.t=id;
-  d.innerHTML=`<div class="nm">(${id})</div><div class="rq">${desc(st)}${st.seeds?` · ${st.seeds} بذور`:''}</div>`;d.appendChild(tubeSVG(id,st,grows));
-  if(phase===0){const c=document.createElement('div');c.className='ctl2';
-   c.innerHTML=`<label>🌡️ <input type="range" min="0" max="35" step="1" value="${st.temp}" aria-label="درجة حرارة الأنبوبة ${id}"></label><button class="lt">${st.light?'💡 مضيء':'🌑 مظلم'}</button>`;
-   const r=c.querySelector('input');r.addEventListener('input',e=>{st.temp=+e.target.value;st.touched=true;const sv=d.querySelector('svg');sv.replaceWith(tubeSVG(id,st,false));steps(Math.max(1,0))});
-   r.addEventListener('click',e=>e.stopPropagation());r.addEventListener('pointerdown',e=>e.stopPropagation());
-   c.querySelector('.lt').onclick=e=>{e.stopPropagation();st.light=!st.light;say(`الأنبوبة (${id}) الآن ${st.light?'في الضوء':'في الظلام'}.`);render()};
-   d.appendChild(c);
-   if(st.cotton||st.water||st.seeds||st.abs||st.stop){const e=document.createElement('div');e.className='why';const b=document.createElement('button');b.textContent='🗑️ أفرغ';b.onclick=ev=>{ev.stopPropagation();S[id]=empty();say(`أفرغت الأنبوبة (${id}).`);render()};e.appendChild(b);d.appendChild(e)}}
+  const d=document.createElement('div');d.className='tube'+(asBook(id)?' done':'');d.dataset.t=id;
+  d.innerHTML=`<div class="nm">(${id})</div><div class="rq">في الكتاب: ${BOOK[id].t}</div>`;d.appendChild(tubeSVG(id,st,grows));
   const s=document.createElement('div');s.className='st';
-  if(phase>=1){if(!u)s.textContent='— بلا بذور';else if(grows){s.textContent=`🌱 نبتت (${st.seeds} من ${st.seeds})`;s.classList.add('ok')}else{s.textContent=`✘ لم تنبت (0 من ${st.seeds})`;s.classList.add('no')}}
+  if(phase>=1){if(!u)s.textContent='— غير مكتملة';else if(grows){s.textContent='🌱 نبتت';s.classList.add('ok')}else{s.textContent='✘ لم تنبت';s.classList.add('no')}}
+  else if(asBook(id)){s.textContent='✔ مثل الكتاب';s.classList.add('ok')}
   d.appendChild(s);
+  if(phase===0&&(st.base||st.cotton||st.seeds||st.top||st.place)){const e=document.createElement('div');e.className='why';const b=document.createElement('button');b.textContent='🗑️ أفرغ';b.onclick=ev=>{ev.stopPropagation();S[id]=empty();say(`أفرغت الأنبوبة (${id}).`);render()};e.appendChild(b);d.appendChild(e)}
   if(phase>=1&&u&&!grows){const w=document.createElement('div');w.className='why';
    if(solved[id])w.innerHTML=`<button class="ok">ينقصها: ${mi.map(k=>WHYN[k]).join(' و')} ✔</button>`;
    else{w.innerHTML='<div style="width:100%;text-align:center;font-size:.7em;font-weight:800;color:var(--muted)">ما الظرف الناقص؟</div>';
@@ -151,13 +144,17 @@ function render(){const box=$('#tubes');box.innerHTML='';
   box.appendChild(d)});
  $('#go').disabled=!(phase===0&&IDS.some(i=>used(S[i])));$('#go').hidden=phase!==0;
 }
+function nextHint(){const id=IDS.find(i=>!asBook(i));if(!id)return'كوّنتم الأنابيب الخمس مثل الكتاب! اضغطوا «مرّ يوم واحد».';
+ const b=BOOK[id],st=S[id],n={water:'الماء',abs:'المسحوق الماص للأكسجين',wet:'القطن الرطب',dry:'القطن الجاف',plug:'سدادة القطن',stop:'السدادة المطاطية'};
+ if(b.base&&st.base!==b.base)return`التالي في الأنبوبة (${id}): ${n[b.base]} في القاع.`;
+ if(st.cotton!==b.cotton)return`التالي في الأنبوبة (${id}): ${n[b.cotton]} على الشاش.`;
+ if(!st.seeds)return`التالي في الأنبوبة (${id}): بذور الطماطم.`;
+ if(st.top!==b.top)return`التالي في الأنبوبة (${id}): ${n[b.top]} في الأعلى.`;
+ return`التالي: ضع الأنبوبة (${id}) في ${PLACES[b.place].n}.`}
 function put(k,id){const st=S[id];
- if(k==='cotton'){if(st.cotton)return say(`في الأنبوبة (${id}) قطن بالفعل.`);st.cotton=true;say(`وضعت قطناً على قاعدة الشاش في الأنبوبة (${id}).`+(st.water?' فامتص الماء وصار رطباً.':' القطن جاف؛ أضف ماء إن أردت أن يكون رطباً.'))}
- else if(k==='water'){if(st.water)return say(`في الأنبوبة (${id}) ماء بالفعل.`);st.water=true;say(st.cotton?`أضفت ماء إلى الأنبوبة (${id})، فصار القطن رطباً.`:`أضفت ماء في قاع الأنبوبة (${id}). ضع فوقه قطناً ليمتصه.`)}
- else if(k==='seeds'){if(st.seeds>=6)return say('الأنبوبة ممتلئة بالبذور.');st.seeds+=3;say(`أضفت 3 بذور طماطم إلى الأنبوبة (${id}). اضبط حرارتها وضوءها ثم اضغط «مرّ يوم واحد».`)}
- else if(k==='abs'){if(st.abs)return say('المسحوق موجود بالفعل.');st.abs=true;say(`وضعت مسحوقاً ماصاً للأكسجين في الأنبوبة (${id}).`+(st.stop?'':' أغلقها بالسدادة حتى لا يدخل الهواء.'))}
- else if(k==='stop'){if(st.stop)return say('الأنبوبة مغلقة بالفعل.');st.stop=true;say(`أغلقت الأنبوبة (${id}) بالسدادة.`)}
- render();if(IDS.some(i=>used(S[i])))steps(1)}
+ if(k==='water'||k==='abs')st.base=k;else if(k==='wet'||k==='dry')st.cotton=k;else if(k==='seeds')st.seeds=true;
+ else if(k==='plug'||k==='stop')st.top=k;else st.place=k;
+ render();say((asBook(id)?`الأنبوبة (${id}) مثل الكتاب ✔ `:'')+nextHint(),asBook(id)?'ok':'');if(IDS.some(i=>used(S[i])))steps(0)}
 function drag(c){let g=null,moved=false,x0=0,y0=0,hot=null;
  c.addEventListener('pointerdown',e=>{if(phase!==0)return;e.preventDefault();c.setPointerCapture(e.pointerId);moved=false;x0=e.clientX;y0=e.clientY});
  c.addEventListener('pointermove',e=>{if(!c.hasPointerCapture(e.pointerId))return;
@@ -169,28 +166,33 @@ function drag(c){let g=null,moved=false,x0=0,y0=0,hot=null;
   else{const was=c.classList.contains('sel');document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));if(!was){c.classList.add('sel');sel=c.dataset.k;say('الآن المس الأنبوبة التي تريد وضعه فيها.')}else sel=null}});
  c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const was=c.classList.contains('sel');document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));if(!was){c.classList.add('sel');sel=c.dataset.k}else sel=null}});
 }
-$('#bookBtn').onclick=()=>{$('#book').hidden=!$('#book').hidden};
-$('#go').onclick=()=>{if(phase!==0)return;phase=0.5;$('#go').disabled=true;$('#palPanel').hidden=true;solved={};steps(2);say('مرّ الوقت... راقبوا البذور.');
+$('#go').onclick=()=>{if(phase!==0)return;const half=IDS.filter(i=>S[i].seeds&&!S[i].place);
+ if(half.length)return say(`ضع الأنبوبة (${half[0]}) في مكانها أولاً.`,'no');
+ phase=0.5;$('#go').disabled=true;$('#palPanel').hidden=true;solved={};say('مرّ الوقت... راقبوا البذور.');
  const dur=RM?600:2600,t0=performance.now();
  const step=n=>{const p=Math.min(1,(n-t0)/dur);grow=p;$('#day').textContent=p<1?`⏳ ${Math.round(p*24)} ساعة`:'📅 بعد يوم واحد تقريباً';render();
-  if(p<1)requestAnimationFrame(step);else{phase=1;render();$('#edit').hidden=false;
+  if(p<1)requestAnimationFrame(step);else{phase=1;render();$('#edit').hidden=false;steps(2);
    const no=IDS.filter(i=>used(S[i])&&missing(S[i]).length);
-   if(no.length){steps(3);say(`شاهدتم التأثير! اختاروا الظرف الناقص تحت كل أنبوبة لم تنبت بذورها: ${no.map(i=>'('+i+')').join(' و')}.`,'ok')}
-   else say('نبتت كل البذور! جرّبوا تغيير ظرف واحد في إحدى الأنابيب (عدّل وجرّب مرة أخرى) وشاهدوا ماذا يحدث.','ok');check()}};
+   say(no.length?`النتائج ظهرت! اختاروا الظرف الناقص تحت كل أنبوبة لم تنبت بذورها: ${no.map(i=>'('+i+')').join(' و')}.`:'نبتت كل البذور! عدّلوا الأنابيب لتكون مثل الكتاب.','ok');check()}};
  requestAnimationFrame(step)};
 function why(id,k,b,mi){
  if(mi.includes(k)){solved[id]=true;say(`صحيح! الأنبوبة (${id}) ينقصها: ${mi.map(x=>WHYN[x]).join(' و')}.`,'ok');render();check();return}
  b.classList.add('no');
- const R={light:'الضوء ليس السبب: البذور تنبت في الظلام أيضاً (جرّبوا أنبوبة مظلمة).',water:'القطن رطب، فالماء متوفر.',oxy:'الأكسجين متوفر في هذه الأنبوبة.',heat:'درجة حرارة هذه الأنبوبة مناسبة.'};
+ const R={light:'الضوء ليس السبب: بذور الأنبوبة (ج) في الظلام.',water:'القطن رطب، فالماء متوفر.',oxy:'الأكسجين متوفر في هذه الأنبوبة.',heat:'هذه الأنبوبة في مكان دافئ.'};
  say(R[k],'no')}
-function check(){const no=IDS.filter(i=>used(S[i])&&missing(S[i]).length);const okAny=IDS.some(i=>used(S[i])&&!missing(S[i]).length);
- if(no.length&&okAny&&no.every(i=>solved[i])&&!asked){asked=true;$('#qbox').hidden=false;showQ();steps(4)}}
-function showQ(){const o=[['الماء والضوء والتربة','لم نستخدم تربة، والبذور تنبت في الظلام أيضاً.'],['الماء والأكسجين ودرجة الحرارة المناسبة',''],['الضوء والأكسجين والدفء','البذور تنبت في الظلام، ولا تنبت بلا ماء.']];
- const box=$('#qopts');box.innerHTML='';let done=false;
- o.forEach(([t,w],i)=>{const b=document.createElement('button');b.className='q';b.textContent=t;b.onclick=()=>{if(done)return;const m=$('#qmsg');m.hidden=false;
-  if(i===1){done=true;b.classList.add('ok');m.className='msg ok';m.textContent='صحيح! والضوء ليس لازماً للإنبات. سجّلوا الاستنتاج في ورقة العمل.';steps(5)}
-  else{b.classList.add('no');m.className='msg no';m.textContent=w}};box.appendChild(b)})}
-$('#edit').onclick=()=>{phase=0;grow=0;solved={};$('#palPanel').hidden=false;$('#edit').hidden=true;$('#day').textContent='';say('عدّلوا ما تريدون، ثم اضغطوا «مرّ يوم واحد» مرة أخرى.');render();steps(1)};
+function check(){const no=IDS.filter(i=>used(S[i])&&missing(S[i]).length);if(!no.every(i=>solved[i])||phase<1)return;
+ if(!IDS.every(asBook)){const d=IDS.find(i=>!asBook(i));say(`لتجيبوا عن أسئلة الورقة كوّنوا الأنابيب مثل الكتاب: الأنبوبة (${d}) مختلفة. اضغطوا «عدّل الأنابيب».`,'no');return}
+ steps(3);$('#qbox').hidden=false;qi=0;showQ()}
+const QS=[
+ {q:'السؤال 1: لمعرفة أثر الماء على الإنبات، نقارن الأنبوبة (أ) مع الأنبوبة:',o:['(ب)','(ج)','(د)','(هـ)'],a:2,ok:'صحيح! (أ) و(د) لا تختلفان إلا في الماء: قطن (د) جاف فلم تنبت بذورها.',no:'ليست هذه. ابحثوا عن أنبوبة تختلف عن (أ) في الماء فقط.'},
+ {q:'السؤال 2: هل الضوء لازم لإنبات البذور؟',o:['نعم، لأن بذور (أ) نبتت في الضوء','لا، لأن بذور (ج) نبتت في الظلام','لا، لأن بذور (ب) لم تنبت'],a:1,ok:'صحيح! بذور (ج) نبتت في خزانة مظلمة، فالضوء غير لازم للإنبات.',no:'ليست هذه. انظروا إلى أنبوبة مظلمة نبتت بذورها.'},
+ {q:'السؤال 3 (الاستنتاج): ما الظروف الثلاثة اللازمة لإنبات بذور الطماطم؟',o:['الماء والضوء والتربة','الماء والأكسجين ودرجة الحرارة المناسبة','الضوء والأكسجين والدفء'],a:1,ok:'صحيح! تحتاج البذور إلى الماء والأكسجين ودرجة الحرارة المناسبة. سجّلوا الإجابات في ورقة العمل.',no:'ليست هذه. تذكّروا: (ج) نبتت في الظلام، و(د) لم تنبت بلا ماء، و(هـ) لم تنبت بلا أكسجين.'}];
+function showQ(){const q=QS[qi];$('#qt').textContent=q.q;$('#qmsg').hidden=true;$('#qnext').hidden=true;const box=$('#qopts');box.innerHTML='';let done=false;
+ q.o.forEach((t,i)=>{const b=document.createElement('button');b.className='q';b.textContent=t;b.onclick=()=>{if(done)return;const m=$('#qmsg');m.hidden=false;
+  if(i===q.a){done=true;b.classList.add('ok');m.className='msg ok';m.textContent=q.ok;if(qi<QS.length-1)$('#qnext').hidden=false;else{steps(4);m.textContent=q.ok+' 🎉'}}
+  else{b.classList.add('no');m.className='msg no';m.textContent=q.no}};box.appendChild(b)})}
+$('#qnext').onclick=()=>{qi++;showQ()};
+$('#edit').onclick=()=>{phase=0;grow=0;solved={};$('#palPanel').hidden=false;$('#edit').hidden=true;$('#qbox').hidden=true;$('#day').textContent='';say('عدّلوا الأنابيب، ثم اضغطوا «مرّ يوم واحد» مرة أخرى. '+nextHint());render();steps(0)};
 $('#reset').onclick=reset;
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
 reset();
