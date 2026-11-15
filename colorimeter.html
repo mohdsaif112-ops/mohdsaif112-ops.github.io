@@ -1,0 +1,284 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر مقياس الألوان</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#eef3f0;--panel:#fff;--ink:#13261f;--muted:#5b6f66;--line:#cfdcd5;--palm:#0f6b5c;--palm-ink:#fff;--date:#b86e0f;--ok:#1f7a45;--ok-soft:#dcf1e3;--bad:#b3261e;--bad-soft:#f8dedb;
+ --glass:#f3f8fb;--glass-line:#6f8a96;--bench:#e4ddd0;--ff:"Tajawal",Tahoma,"Segoe UI",sans-serif;--fd:"Reem Kufi","Tajawal",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;--glass:#22343c;--glass-line:#8fb0bd;--bench:#2b2a26;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a16;--panel:#172520;--ink:#e8f1ec;--muted:#9db3a9;--line:#2c3f37;--palm:#3fb39c;--palm-ink:#0f1a16;--date:#f0a33c;--ok:#6cd39a;--ok-soft:#173a26;--bad:#ff8a80;--bad-soft:#41201d;--glass:#22343c;--glass-line:#8fb0bd;--bench:#2b2a26;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff);direction:rtl;font-size:clamp(15px,1.5vw,20px);line-height:1.55;margin:0;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px}
+main{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+h1{font-family:var(--fd);color:var(--palm);margin:0;font-size:1.45em}
+h2{font-size:1em;margin:0 0 8px;color:var(--palm);font-weight:800}
+.lead{color:var(--muted);margin:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps span{font-size:.8em;font-weight:800;border:1.5px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.steps span.now{border-color:var(--date);color:var(--date)}.steps span.done{border-color:var(--ok);color:var(--ok)}
+.msg{font-weight:800;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--palm) 10%,transparent);color:var(--palm);min-height:2.6em}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}.msg.no{background:var(--bad-soft);color:var(--bad)}
+.palette{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
+.chip{display:flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:12px;padding:6px 12px;background:var(--panel);font-weight:800;font-size:.9em;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.chip svg{width:28px;height:34px;flex:none}
+.chip.sel{border-color:var(--date);background:color-mix(in srgb,var(--date) 14%,transparent)}
+.ghost{position:fixed;pointer-events:none;z-index:50;opacity:.92;transform:translate(-50%,-50%) scale(1.08);box-shadow:0 6px 16px #0004;border-radius:12px}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:12px;align-items:stretch}
+@media (max-width:760px){.bench{grid-template-columns:1fr}}
+.zone{border:2px dashed var(--line);border-radius:14px;padding:8px;background:color-mix(in srgb,var(--bench) 45%,transparent);transition:border-color .15s,background .15s}
+.zone.hot,.slot.hot{border-color:var(--date);background:color-mix(in srgb,var(--date) 14%,transparent)}
+.rxwrap{display:flex;gap:10px;align-items:center;justify-content:center}
+.rxwrap svg{display:block}
+.timer{font:800 1.5em "Courier New",monospace;direction:ltr;background:#15211d;color:#7dffb0;border-radius:8px;padding:2px 10px;text-align:center}
+.zlab{text-align:center;font-weight:800;color:var(--palm);font-size:.9em}
+.rack{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;direction:ltr}
+.slot{border:2px dashed var(--line);border-radius:12px;padding:2px;display:flex;flex-direction:column;align-items:center;gap:0;min-height:150px;transition:border-color .15s,background .15s}
+.tube{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;display:flex;flex-direction:column;align-items:center;border-radius:10px;padding:2px 4px}
+.tube.sel{background:color-mix(in srgb,var(--date) 18%,transparent)}
+.tube svg{width:44px;height:126px;display:block}
+.tlab{direction:rtl;font-weight:800;font-size:.82em;min-height:1.4em;color:var(--date)}
+.tlab.m{color:var(--ok)}
+.rackfoot{direction:rtl;text-align:center;font-size:.8em;color:var(--muted);margin-top:4px}
+.colwrap svg{width:100%;height:auto;display:block}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:12px;align-items:start}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}}
+table{border-collapse:collapse;width:100%;font-size:.92em}
+td,th{border:1px solid var(--line);padding:6px 4px;text-align:center}
+th{background:color-mix(in srgb,var(--palm) 14%,transparent);color:var(--palm)}
+td.num{font:800 1.05em "Courier New",monospace;direction:ltr}
+.sw{display:inline-block;width:1.3em;height:1.3em;border-radius:4px;border:1px solid #0003;vertical-align:middle;margin-left:4px}
+svg text{font-family:var(--ff)}
+#graph,#colsvg,#lens,#rxsvg{direction:ltr}
+#colsvg{max-height:185px}
+.colwrap{margin-top:10px;padding:4px 8px}
+.btn{font:800 1em var(--ff);border:2px solid var(--palm);border-radius:12px;padding:9px 16px;background:transparent;color:var(--palm);cursor:pointer}
+.btn.main{background:var(--palm);color:var(--palm-ink)}
+button:focus-visible{outline:3px solid var(--date);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.q{font:800 .95em var(--ff);text-align:right;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:transparent;color:var(--ink);cursor:pointer;width:100%}
+.q.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}.q.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.qopts{display:grid;gap:8px}
+.qt{font-weight:800;margin:0 0 8px}
+.fb{font-weight:800;min-height:1.5em;margin-top:6px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--bad)}
+</style></head><body>
+<main>
+<header><h1>مختبر مقياس الألوان</h1>
+<p class="lead">قياس معدل اختفاء النشا بفعل الأميليز (ص 110 - 111). اسحب الأدوات بإصبعك إلى مكانها، أو المسها ثم المس المكان.</p></header>
+<div class="steps" id="steps"><span>① جهّزوا أنابيب الكشف</span><span>② امزجوا النشا والأميليز</span><span>③ خذوا عينة كل دقيقة</span><span>④ رتّبوا الأنابيب</span><span>⑤ قيسوا بمقياس الألوان</span><span>⑥ أجيبوا</span></div>
+<div class="msg" id="msg"></div>
+
+<section class="panel">
+<h2>طاولة المختبر</h2>
+<div class="palette" id="pal"></div>
+<div class="bench">
+ <div class="zone" data-drop="rx" id="rxzone">
+  <div class="zlab">أنبوبة التفاعل</div>
+  <div class="rxwrap"><svg id="rxsvg" viewBox="0 0 70 190" width="60" height="163"></svg>
+   <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div class="timer" id="timer">00:00</div>
+   <svg id="lens" viewBox="0 0 130 130" width="112" height="112"></svg><div style="font-size:.75em;font-weight:800;color:var(--muted)">عدسة الجزيئات</div></div></div>
+ </div>
+ <div class="zone">
+  <div class="zlab">حامل أنابيب الكشف</div>
+  <div class="rack" id="rack"></div>
+  <div class="rackfoot">في الصورة 3-2 يزداد الزمن من اليسار إلى اليمين.</div>
+ </div>
+</div>
+<div class="colwrap zone" data-drop="col" id="colzone"><div class="zlab">مقياس الألوان (الشكل 3-6): اسحب أنبوبة فيها عينة إلى مكان الأنبوبة</div><svg id="colsvg" viewBox="0 18 760 212"></svg></div>
+</section>
+
+<section class="wrap">
+ <div class="panel"><h2>جدول النتائج</h2>
+  <table><thead><tr><th>الزمن (دقيقة)</th><th>لون العينة مع اليود</th><th>قراءة مقياس الألوان</th></tr></thead><tbody id="tb"></tbody></table></div>
+ <div class="panel"><h2>كمية النشا المتبقية مقابل الزمن</h2><svg id="graph" viewBox="0 0 460 300"></svg></div>
+</section>
+
+<section class="panel" id="qbox" hidden><h2 id="qh">أسئلة ورقة العمل</h2><p class="qt" id="qt"></p><div class="qopts" id="qopts"></div><div class="fb" id="fb"></div>
+ <div class="row" style="margin-top:8px"><button class="btn main" id="qnext" hidden>السؤال التالي</button></div></section>
+
+<div class="row"><button class="btn" id="again">عدّل وجرّب مرة أخرى</button><button class="btn" id="reset">ابدأ من جديد</button></div>
+</main>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const T=[0,1,2,3,4];                                   // زمن أخذ العينات (دقيقة)
+const R=[0.90,0.56,0.35,0.22,0.13];                    // قراءات مقياس الألوان (ثابتة لتطابق نموذج الإجابة)
+const COL=['#14163b','#3b1e2e','#7a3a12','#b0661c','#dcab52'];
+const WORD=['أزرق قاتم','بني قاتم','بني','بني فاتح','بني باهت'];
+const IOD='#f0c75e', SEC_PER_MIN=2.4;
+const CHIPS=[['starch','محلول النشا','#f3f1ea'],['amylase','محلول الأميليز','#e8f2fb'],['iodine','محلول اليود','#c9781c'],['dropper','القطّارة',null]];
+let S;
+function fresh(){return{tubes:[0,1,2,3,4].map(i=>({id:i,iod:false,k:null,meas:false})),order:[0,1,2,3,4],starch:false,amylase:false,t:0,run:false,wait:false,next:0,col:null,lastRead:0,q:0,solved:false,orderOk:false}}
+function say(t,c){const m=$('#msg');m.textContent=t;m.className='msg'+(c?' '+c:'')}
+function stepNow(){const t=S.tubes;let n=0;
+ if(t.every(x=>x.iod))n=1; if(n>=1&&S.starch&&S.amylase)n=2; if(n>=2&&S.next>4)n=3; if(n>=3&&S.orderOk)n=4; if(n>=4&&t.every(x=>x.meas))n=5;
+ [...$('#steps').children].forEach((s,i)=>s.className=i<n?'done':i===n?'now':'');return n}
+const rem=t=>{const i=Math.min(3,Math.floor(t)),f=t-i;return R[i]+(R[i+1]-R[i])*Math.min(1,f)};   // قراءة متوقعة في أي لحظة
+const fmt=t=>{const s=Math.round(t*60);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+
+// ---------- الرسوم ----------
+function tubeSvg(fill,level,extra=''){
+ const top=150-level*118;
+ return `<svg viewBox="0 0 52 150"><defs><clipPath id="c${Math.random().toString(36).slice(2,7)}"></clipPath></defs>`+
+  (level>0?`<path d="M9 ${top} L43 ${top} L43 128 Q43 145 26 145 Q9 145 9 128 Z" fill="${fill}"/>`:'')+
+  `<path d="M7 6 L7 128 Q7 147 26 147 Q45 147 45 128 L45 6" fill="none" stroke="var(--glass-line)" stroke-width="2.5"/><rect x="4" y="3" width="44" height="5" rx="2" fill="var(--glass-line)"/>${extra}</svg>`}
+function chipIcon(k,c){
+ if(k==='dropper')return `<svg viewBox="0 0 28 34"><rect x="9" y="1" width="10" height="9" rx="4" fill="#d6336c"/><path d="M11 10 L17 10 L16 29 L14 33 L12 29 Z" fill="var(--glass)" stroke="var(--glass-line)" stroke-width="1.5"/></svg>`;
+ return `<svg viewBox="0 0 28 34"><path d="M9 2 L19 2 L19 8 L25 18 L25 31 L3 31 L3 18 L9 8 Z" fill="var(--glass)" stroke="var(--glass-line)" stroke-width="1.5"/><path d="M4 20 L24 20 L24 30 L4 30 Z" fill="${c}"/></svg>`}
+function renderPal(){$('#pal').innerHTML=CHIPS.map(([k,n,c])=>`<div class="chip${sel===k?' sel':''}" data-drag="${k}">${chipIcon(k,c)}${n}</div>`).join('')}
+function renderRx(){
+ const has=S.starch||S.amylase, f=S.starch&&S.amylase?(rem(S.t)-0.05)/0.85:1;
+ const lvl=(S.starch?0.32:0)+(S.amylase?0.28:0);
+ const fill=S.starch?`rgba(196,204,216,${0.4+0.55*f})`:'#d6e8f7';
+ const top=180-lvl*150;
+ $('#rxsvg').innerHTML=(has?`<path d="M14 ${top} L56 ${top} L56 160 Q56 182 35 182 Q14 182 14 160 Z" fill="${fill}" stroke="#0001"/>`:'')+
+  `<path d="M11 8 L11 160 Q11 186 35 186 Q59 186 59 160 L59 8" fill="none" stroke="var(--glass-line)" stroke-width="3"/><rect x="7" y="4" width="56" height="6" rx="2" fill="var(--glass-line)"/>`+
+  (S.starch?`<text x="35" y="${top-6}" font-size="9" font-weight="800" text-anchor="middle" fill="var(--muted)">${S.amylase?'نشا + أميليز':'نشا'}</text>`:S.amylase?`<text x="35" y="${top-6}" font-size="9" font-weight="800" text-anchor="middle" fill="var(--muted)">أميليز</text>`:'');
+ $('#timer').textContent=fmt(S.t);
+ // عدسة الجزيئات: سلسلة نشا تقصر، وجزيئات مالتوز تزداد
+ const n=S.starch?Math.round(12*f):0, mal=S.starch&&S.amylase?Math.round((1-f)*6):0;
+ let L='<circle cx="65" cy="65" r="62" fill="var(--glass)" stroke="var(--glass-line)" stroke-width="3"/>';
+ for(let i=0;i<n;i++){const a=i*0.5,x=22+i*7.5,y=52+Math.sin(a)*8;L+=`<circle cx="${x}" cy="${y}" r="4.6" fill="#2a4fb3"/>`}
+ for(let i=0;i<mal;i++){const x=24+(i%3)*30,y=88+Math.floor(i/3)*16;L+=`<circle cx="${x}" cy="${y}" r="4.6" fill="#e0a21b"/><circle cx="${x+9}" cy="${y}" r="4.6" fill="#e0a21b"/>`}
+ if(S.amylase){L+=`<path d="M92 26 a12 12 0 1 1 0.1 0 Z" fill="#2f9e6a"/><text x="92" y="29" font-size="8" font-weight="800" fill="#fff" text-anchor="middle">إنزيم</text>`}
+ L+=`<text x="45" y="24" font-size="9" font-weight="800" text-anchor="middle" fill="#2a4fb3">${S.starch?'نشا':''}</text><text x="65" y="124" font-size="9" font-weight="800" text-anchor="middle" fill="#b07d0e">${mal?'مالتوز':''}</text>`;
+ $('#lens').innerHTML=L}
+function renderRack(){
+ $('#rack').innerHTML=S.order.map((id,slot)=>{const t=S.tubes[id];
+  const fill=t.k!==null?COL[t.k]:IOD, lvl=t.k!==null?0.42:t.iod?0.3:0;
+  const lab=t.k!==null?`${T[t.k]} دقيقة`:t.iod?'يود':'فارغة';
+  return `<div class="slot" data-drop="slot:${slot}"><div class="tube${sel==='tube:'+id?' sel':''}" data-drag="tube:${id}">${tubeSvg(fill,lvl)}</div><div class="tlab${t.meas?' m':''}">${lab}${t.meas?' ✔':''}</div></div>`}).join('')}
+function renderCol(){
+ const t=S.col!==null?S.tubes[S.col]:null, A=t&&t.k!==null?R[t.k]:t&&t.iod?0.02:0;
+ const on=t!==null, trans=Math.pow(10,-A);
+ const tf=t?(t.k!==null?COL[t.k]:t.iod?IOD:'none'):'none';
+ // الضوء يسير من اليمين إلى اليسار كما في الشكل 3-6
+ let s=`<rect x="0" y="0" width="760" height="230" fill="none"/>`;
+ if(on){s+=`<polygon points="650,96 520,104 520,126 650,134" fill="#fff3a0" opacity=".9"/>`+
+  `<polygon points="508,104 330,106 330,124 508,126" fill="#ff8a3d" opacity=".85"/>`+
+  `<polygon points="300,106 150,108 150,122 300,124" fill="#ff8a3d" opacity="${(0.08+0.85*trans).toFixed(2)}"/>`}
+ s+=`<g><circle cx="690" cy="115" r="30" fill="${on?'#ffe066':'#f1f1e6'}" stroke="#8a7a2a" stroke-width="2.5"/><rect x="676" y="143" width="28" height="22" rx="3" fill="#9aa"/><text x="690" y="198" font-size="17" font-weight="800" text-anchor="middle" fill="var(--ink)">ضوء</text></g>`+
+  `<rect x="508" y="62" width="12" height="106" fill="#e8590c" opacity=".85"/><text x="514" y="198" font-size="17" font-weight="800" text-anchor="middle" fill="var(--ink)">مرشح</text>`+
+  `<g transform="translate(290,30)"><rect x="-6" y="0" width="64" height="168" rx="8" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="6 5"/>`+
+  (t?`<path d="M10 ${t.k!==null?70:105} L42 ${t.k!==null?70:105} L42 148 Q42 162 26 162 Q10 162 10 148 Z" fill="${tf}"/>`:'')+
+  `<path d="M7 8 L7 148 Q7 166 26 166 Q45 166 45 148 L45 8" fill="none" stroke="${t?'var(--glass-line)':'var(--line)'}" stroke-width="2.5"/></g>`+
+  `<text x="316" y="222" font-size="16" font-weight="800" text-anchor="middle" fill="var(--ink)">محلول في أنبوبة</text>`+
+  `<g><rect x="20" y="62" width="130" height="106" rx="10" fill="#33413d"/><rect x="34" y="80" width="102" height="44" rx="5" fill="#cfe8c8"/>`+
+  `<text x="85" y="113" font-size="30" font-weight="800" text-anchor="middle" fill="#13261f" style="font-family:'Courier New',monospace" id="lcd">${on?S.lastRead.toFixed(2):'0.00'}</text>`+
+  `<circle cx="60" cy="148" r="7" fill="#7d8f8a"/><circle cx="110" cy="148" r="7" fill="#7d8f8a"/><text x="95" y="198" font-size="15" font-weight="800" text-anchor="middle" fill="var(--ink)">مقياس الإضاءة وقراءة رقمية</text></g>`;
+ if(!t)s+=`<text x="316" y="110" font-size="14" font-weight="800" text-anchor="middle" fill="var(--muted)">ضع الأنبوبة هنا</text>`;
+ $('#colsvg').innerHTML=s}
+function renderTable(){
+ $('#tb').innerHTML=T.map((m,k)=>{const t=S.tubes.find(x=>x.k===k);
+  return `<tr><td class="num">${m}</td><td>${t?`<span class="sw" style="background:${COL[k]}"></span>${WORD[k]}`:''}</td><td class="num">${t&&t.meas?R[k].toFixed(2):''}</td></tr>`}).join('')}
+function renderGraph(){
+ const X=t=>60+t*92, Y=v=>250-v*220;let g='';
+ g+=`<line x1="60" y1="250" x2="440" y2="250" stroke="var(--ink)" stroke-width="2"/><line x1="60" y1="250" x2="60" y2="20" stroke="var(--ink)" stroke-width="2"/>`;
+ for(let v=0;v<=1.001;v+=0.2){g+=`<line x1="60" y1="${Y(v)}" x2="440" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="52" y="${Y(v)+5}" font-size="13" text-anchor="end" fill="var(--muted)">${v.toFixed(1)}</text>`}
+ T.forEach(t=>g+=`<text x="${X(t)}" y="270" font-size="13" text-anchor="middle" fill="var(--muted)">${t}</text>`);
+ g+=`<text x="250" y="294" font-size="14" font-weight="800" text-anchor="middle" fill="var(--ink)">الزمن (دقيقة)</text>`;
+ g+=`<text x="16" y="135" font-size="13" font-weight="800" text-anchor="middle" fill="var(--ink)" transform="rotate(-90 16 135)">قراءة مقياس الألوان (النشا المتبقي)</text>`;
+ const pts=T.map((t,k)=>S.tubes.find(x=>x.k===k&&x.meas)?[X(t),Y(R[k])]:null);
+ if(pts.every(Boolean))g+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--palm)" stroke-width="3"/>`;
+ if(S.q>3||S.rateShown)g+=`<line x1="${X(0)}" y1="${Y(R[0])}" x2="${X(1)}" y2="${Y(R[1])}" stroke="var(--bad)" stroke-width="5" stroke-linecap="round"/><text x="${X(1)+10}" y="${Y(R[1])-14}" font-size="13" font-weight="800" fill="var(--bad)">المعدل الأولي</text>`;
+ pts.forEach(p=>{if(p)g+=`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="var(--date)" stroke="#fff" stroke-width="1.5"/>`});
+ $('#graph').innerHTML=g}
+function render(){renderPal();renderRx();renderRack();renderCol();renderTable();renderGraph();stepNow()}
+
+// ---------- منطق التجربة ----------
+function hint(){const t=S.tubes;
+ if(!t.every(x=>x.iod))return 'اسحب «محلول اليود» إلى كل أنبوبة من أنابيب الكشف الخمس.';
+ if(!S.starch||!S.amylase)return 'اسحب «محلول النشا» ثم «محلول الأميليز» إلى أنبوبة التفاعل.';
+ if(S.next<=4)return S.wait?`حان وقت العينة (${T[S.next]} دقيقة): اسحب «القطّارة» إلى أنبوبة كشف فارغة.`:'انتظروا... المؤقت يعمل حتى موعد العينة التالية.';
+ if(!S.orderOk)return 'رتّبوا الأنابيب بالسحب حتى يزداد الزمن من اليسار إلى اليمين كما في الصورة 3-2.';
+ if(!t.every(x=>x.meas))return 'اسحب كل أنبوبة إلى مقياس الألوان واقرأ القراءة الرقمية.';
+ return 'أجيبوا عن الأسئلة في الأسفل.'}
+function checkOrder(){const ks=S.order.map(id=>S.tubes[id].k);S.orderOk=ks.every(k=>k!==null)&&ks.every((k,i)=>i===0||k>ks[i-1]);return S.orderOk}
+function drop(kind,target){
+ const d=target.dataset.drop;
+ if(d==='rx'){
+  if(kind==='iodine')return say('لا نضع اليود في أنبوبة التفاعل: اليود يتداخل مع معدل التفاعل ويبطئه (ص 110). ضعه في أنابيب الكشف.','no');
+  if(kind==='dropper')return say(S.starch&&S.amylase?'اسحب القطّارة إلى أنبوبة كشف فيها يود لتضع فيها العينة.':'امزجوا النشا والأميليز أولاً.','no');
+  if(kind.startsWith('tube'))return say('أنابيب الكشف تبقى في الحامل أو تُقاس في مقياس الألوان.','no');
+  if(!S.tubes.every(x=>x.iod))return say('جهّزوا أنابيب الكشف الخمس باليود أولاً، لأن العينة الأولى تؤخذ فور المزج.','no');
+  if(kind==='starch'){if(S.starch)return say('النشا موجود في أنبوبة التفاعل.');S.starch=true}
+  if(kind==='amylase'){if(S.amylase)return say('الأميليز موجود في أنبوبة التفاعل.');S.amylase=true}
+  if(S.starch&&S.amylase){S.t=0;S.next=0;S.wait=true;render();return say('بدأ التفاعل! خذوا العينة الأولى الآن (0 دقيقة): اسحب «القطّارة» إلى أنبوبة كشف.','ok')}
+  render();return say(S.starch?'✔ النشا. أضيفوا الأميليز ليبدأ التفاعل.':'✔ الأميليز. أضيفوا النشا ليبدأ التفاعل.','ok')}
+ if(d==='col'){
+  if(!kind.startsWith('tube'))return say('ضعوا في مقياس الألوان أنبوبة كشف فيها عينة.','no');
+  const id=+kind.split(':')[1],t=S.tubes[id];S.col=id;
+  if(t.k===null){S.lastRead=t.iod?0.02:0;render();return say(t.iod?'هذه الأنبوبة فيها يود فقط بلا عينة، فلا يوجد لون أزرق تقريباً.':'الأنبوبة فارغة.','no')}
+  animateRead(R[t.k],()=>{t.meas=true;render();say(`القراءة ${R[t.k].toFixed(2)} عند ${T[t.k]} دقيقة. ${S.tubes.every(x=>x.meas)?'✔ قستم كل العينات؛ أجيبوا عن الأسئلة.':'قيسوا بقية الأنابيب.'}`,'ok');maybeQ()});return}
+ if(d.startsWith('slot')){
+  const slot=+d.split(':')[1],id=S.order[slot],t=S.tubes[id];
+  if(kind.startsWith('tube')){const a=+kind.split(':')[1],from=S.order.indexOf(a);if(from===slot)return;
+   [S.order[from],S.order[slot]]=[S.order[slot],S.order[from]];const was=S.orderOk;checkOrder();render();
+   return say(S.orderOk&&!was?'✔ مثل الصورة 3-2: يزداد الزمن من اليسار إلى اليمين، واللون يفتح من الأزرق القاتم إلى البني الباهت.':hint(),S.orderOk?'ok':'')}
+  if(kind==='iodine'){if(t.iod)return say('في هذه الأنبوبة يود.');t.iod=true;render();
+   return say(S.tubes.every(x=>x.iod)?'✔ خمس أنابيب كشف فيها يود مثل الصورة 3-2. الآن امزجوا النشا والأميليز في أنبوبة التفاعل.':'✔ يود. أكملوا بقية الأنابيب.','ok')}
+  if(kind==='starch'||kind==='amylase')return say('أنابيب الكشف لليود والعينات فقط؛ امزجوا النشا والأميليز في أنبوبة التفاعل.','no');
+  if(kind==='dropper'){
+   if(!(S.starch&&S.amylase))return say('امزجوا النشا والأميليز أولاً.','no');
+   if(S.next>4)return say('أخذتم العينات الخمس.');
+   if(!S.wait)return say('انتظروا حتى يحين موعد العينة التالية.','no');
+   if(!t.iod)return say('ضعوا محلول اليود في هذه الأنبوبة أولاً.','no');
+   if(t.k!==null)return say('في هذه الأنبوبة عينة؛ اختاروا أنبوبة فيها يود فقط.','no');
+   t.k=S.next;S.next++;S.wait=false;checkOrder();
+   const msg=`✔ عينة ${T[t.k]} دقيقة: اللون ${WORD[t.k]}.`;
+   if(S.next<=4){S.run=true;last=performance.now();requestAnimationFrame(tick)}
+   render();return say(S.next>4?msg+' ' +hint():msg+' انتظروا العينة التالية...','ok')}}}
+let last=0;
+function tick(now){if(!S.run)return;S.t+=(now-last)/1000/SEC_PER_MIN;last=now;
+ if(S.t>=S.next){S.t=S.next;S.run=false;S.wait=true;render();say(hint());return}
+ renderRx();requestAnimationFrame(tick)}
+function animateRead(v,done){const t0=performance.now();renderCol();
+ (function step(n){const f=Math.min(1,(n-t0)/700);S.lastRead=v*f;const el=document.getElementById('lcd');if(el)el.textContent=S.lastRead.toFixed(2);
+  if(f<1)requestAnimationFrame(step);else{S.lastRead=v;done()}})(t0)}
+
+// ---------- الأسئلة (أسئلة ورقة العمل نفسها) ----------
+const QS=[
+ ['كيف تغيّر لون العينات مع اليود بمرور الزمن؟',['من الأزرق القاتم إلى البني، ثم البني الباهت','من البني الباهت إلى الأزرق القاتم','بقي اللون نفسه','من الأزرق إلى الأخضر'],0,
+  'كلما تحوّل النشا إلى مالتوز قلّ النشا، فيقل اللون الأزرق القاتم مع اليود.'],
+ ['ماذا يحدث لقراءة مقياس الألوان كلما قلّ النشا المتبقي؟',['تقل، لأن اللون الأزرق يخف فيقل امتصاص الضوء','تزداد، لأن اللون يصبح أفتح','لا تتغيّر','تزداد ثم تقل'],0,
+  'كلما زاد تركيز المادة المسببة للون زاد الامتصاص (ص 110)، والعكس.'],
+ ['احسبوا المعدل الأولي للتفاعل من أول دقيقة.',['(0.90 − 0.56) ÷ 1 = 0.34 وحدة لكل دقيقة','0.56 ÷ 1 = 0.56 وحدة لكل دقيقة','0.90 × 1 = 0.90 وحدة لكل دقيقة','(0.90 + 0.56) ÷ 1 = 1.46 وحدة لكل دقيقة'],0,
+  'المعدل الأولي = التغيّر في القراءة في أول فترة ÷ الزمن (ميل بداية المنحنى).'],
+ ['لماذا لا نضع اليود في أنبوبة التفاعل نفسها؟',['لأن اليود يتداخل مع معدل التفاعل ويبطئه','لأن اليود يهضم النشا','لأن مقياس الألوان لا يقيس اللون البني','لأن اليود يزيد سرعة الأميليز'],0,
+  'مزج النشا واليود والأميليز في أنبوبة واحدة سهل المراقبة، لكنه غير مثالي لأن اليود يبطئ التفاعل (ص 110).']];
+function maybeQ(){if(S.tubes.every(x=>x.meas)&&$('#qbox').hidden){$('#qbox').hidden=false;S.q=0;showQ();stepNow()}}
+function showQ(){
+ if(S.q>=QS.length){$('#qh').textContent='✔ أحسنتم! انتهت الأسئلة';$('#qt').textContent='انقلوا الإجابات إلى ورقة العمل، ويستعد المتحدث لعرض النتائج.';$('#qopts').innerHTML='';$('#fb').textContent='';$('#qnext').hidden=true;[...$('#steps').children][5].className='done';renderGraph();return}
+ const [q,o,a,why]=QS[S.q];$('#qh').textContent=`السؤال ${S.q+1} من ${QS.length}`;$('#qt').textContent=q;$('#fb').textContent='';$('#fb').className='fb';$('#qnext').hidden=true;
+ const order=o.map((_,i)=>i).sort((x,y)=>((x*7+S.q*3)%4)-((y*7+S.q*3)%4));
+ $('#qopts').innerHTML='';order.forEach(i=>{const b=document.createElement('button');b.className='q';b.textContent=o[i];
+  b.onclick=()=>{if(i===a){b.classList.add('ok');$('#fb').textContent='✔ صحيح. '+why;$('#fb').className='fb ok';$('#qnext').hidden=false;if(S.q===2){S.rateShown=true;renderGraph()}}
+   else{b.classList.add('no');$('#fb').textContent='حاولوا مرة أخرى: '+why;$('#fb').className='fb no'}};$('#qopts').appendChild(b)})}
+$('#qnext').onclick=()=>{S.q++;showQ()};
+
+// ---------- السحب بالإصبع أو اللمس ثم اللمس ----------
+let sel=null,dr=null;
+document.addEventListener('pointerdown',e=>{const el=e.target.closest('[data-drag]');if(!el)return;e.preventDefault();
+ dr={kind:el.dataset.drag,el,x0:e.clientX,y0:e.clientY,ghost:null,hot:null}});
+document.addEventListener('pointermove',e=>{if(!dr)return;
+ if(!dr.ghost){if(Math.hypot(e.clientX-dr.x0,e.clientY-dr.y0)<8)return;dr.ghost=dr.el.cloneNode(true);dr.ghost.classList.add('ghost');dr.ghost.style.width=dr.el.offsetWidth+'px';document.body.appendChild(dr.ghost)}
+ dr.ghost.style.left=e.clientX+'px';dr.ghost.style.top=e.clientY+'px';
+ if(e.clientY>innerHeight-60)scrollBy(0,14);else if(e.clientY<60)scrollBy(0,-14);
+ const h=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-drop]');if(h!==dr.hot){dr.hot?.classList.remove('hot');h?.classList.add('hot');dr.hot=h}});
+function endDrag(e,cancel){if(!dr)return;const d=dr;dr=null;d.hot?.classList.remove('hot');
+ if(d.ghost){d.ghost.remove();if(cancel)return;const tg=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-drop]');sel=null;if(tg)drop(d.kind,tg);else say(hint());renderPal();renderRack();return}
+ // لمسة: إن كانت أداة مختارة واللمسة على أنبوبة في الحامل فضع الأداة عليها، وإلا اختر هذا العنصر
+ const tg=d.el.closest('[data-drop]');
+ if(sel&&sel!==d.kind&&tg){const k=sel;sel=null;drop(k,tg);renderPal();renderRack();return}
+ sel=sel===d.kind?null:d.kind;renderPal();renderRack();if(sel)say('اخترت الأداة؛ المس الآن المكان الذي تريد وضعها فيه.')}
+document.addEventListener('pointerup',e=>endDrag(e,false));
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+document.addEventListener('click',e=>{if(!sel||e.target.closest('[data-drag]'))return;const tg=e.target.closest('[data-drop]');if(!tg)return;const k=sel;sel=null;drop(k,tg);renderPal();renderRack()});
+
+$('#again').onclick=()=>{S.run=false;S.tubes.forEach(t=>{t.k=null;t.meas=false});S.starch=S.amylase=false;S.t=0;S.next=0;S.wait=false;S.col=null;S.lastRead=0;S.orderOk=false;S.rateShown=false;$('#qbox').hidden=true;render();say('عدّلوا وجرّبوا مرة أخرى: أنابيب الكشف فيها يود؛ امزجوا النشا والأميليز من جديد.')};
+$('#reset').onclick=()=>{if(S)S.run=false;S=fresh();sel=null;$('#qbox').hidden=true;render();say(hint())};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+$('#reset').onclick();
+})();
+</script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script></body></html>
