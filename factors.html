@@ -350,7 +350,7 @@ function finish(o2){
  running=false;const rt=Math.round(o2*2*10)/10;
  rows.push({key:lastKey,x:st[mode],o2,rate:rt,col:COLORS[rows.length%COLORS.length]});
  setTabs(false);$('#go').disabled=false;drawLive(0);drawRes();drawTable();drawGauge(rt);
- say(`بعد 30 ثانية: حجم الأكسجين <bdi dir="ltr">${fmt(o2,1)} mL</bdi>، فالمعدل الأولي = <bdi dir="ltr">${fmt(o2,1)} × 2 = ${fmt(rt,1)} mL/min</bdi>. سجّلوا القراءة، ثم جرّبوا قيمة أخرى.`,'ok');
+ say(`بعد 30 ثانية: حجم الأكسجين <bdi dir="ltr">${fmt(o2,1)} mL</bdi>، فالمعدل الأولي = <bdi dir="ltr">${fmt(o2,1)} ÷ 0.5 = ${fmt(rt,1)} mL/min</bdi>. سجّلوا القراءة، ثم جرّبوا قيمة أخرى.`,'ok');
  if(rows.length>=4&&!answered){showQ();setSteps(3)}else setSteps(2);
 }
 
