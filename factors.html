@@ -90,7 +90,7 @@ tr.new td{background:color-mix(in srgb,var(--date) 18%,transparent)}
   <svg id="app" viewBox="0 0 720 350" role="img" aria-label="دورق التفاعل في حمام مائي متصل بحقنة غاز"></svg>
   <div id="ctls"></div>
   <div class="row">
-   <button class="btn main" id="go" disabled>▶ ابدأ التفاعل (30 ثانية)</button>
+   <button class="btn main" id="go" disabled>▶ ابدأ التفاعل (3 دقائق)</button>
    <button class="btn" id="reset">↺ ابدأ من جديد</button>
   </div>
   <div class="msg info" id="msg" role="status" aria-live="polite">اختر العامل الذي تريد تغييره من الأزرار في الأعلى.</div>
@@ -159,10 +159,14 @@ const K=5/3;
 const fT=T=>T<=40?Math.pow(K,(T-30)/10):K*Math.max(0,1-((T-40)/20)**2);
 const fP=p=>Math.exp(-(((p-7)/2.2)**2));
 const rate=s=>(s.E/3)*pchip(s.S)*fT(s.T)*fP(s.P);
+// منحنى حجم O₂ مع الزمن (الشكل 3-9 أ): مستقيم في أول 30 ثانية (المعدل الأولي)، ثم يتباطأ ويستقر لأن المادة المتفاعلة تُستهلك
+const TMAX=180;
+const vCurve=(r,S)=>{const v30=Math.round(r/2*10)/10,vf=Math.min(4.9,Math.max(0.6*S,v30*1.35)),k=v30/30;
+ return t=>t<=30?k*t:vf-(vf-v30)*Math.exp(-k*(t-30)/Math.max(1e-6,vf-v30))};
 const activeFrac=s=>(s.T>40?fT(s.T)/K:1)*fP(s.P);
 
 // ---- الحالة ----
-let mode=null,st={...STD},rows=[],running=false,answered=false,lastKey=null,curO2=0;
+let mode=null,st={...STD},rows=[],running=false,answered=false,lastKey=null,curO2=0,curF=null;
 
 // ---- أدوات الرسم ----
 function el(tag,at,parent){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(parent)parent.appendChild(e);return e}
@@ -254,7 +258,7 @@ function drawApp(o2,secs){
  // المؤقت
  el('rect',{x:560,y:110,width:140,height:52,rx:10,fill:'#1e2623'},app);
  const s=secs==null?0:secs;
- tx(app,630,136,'00:'+String(Math.floor(s)).padStart(2,'0'),{fs:28,ltr:1,fill:s>=30?'#ffd43b':'#69db7c'});
+ tx(app,630,136,String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0'),{fs:28,ltr:1,fill:s>=30?'#ffd43b':'#69db7c'});
  tx(app,630,176,'المؤقت',{fs:12,c:'tm'});
  // مخبار الإنزيم ومخبار المادة المتفاعلة
  cyl(380,200,'مستخلص الكرفس',st.E,4,'#5fb87a',vtxt('E',st.E));
@@ -296,15 +300,21 @@ function axes(svg,o){
  tx(svg,(L+W-R)/2,H-10,xl,{fs:13});tx(svg,14,(Tp+H-B)/2,yl,{fs:13,rot:-90});
  return{sx,sy};
 }
-const LIVE={L:46,R:70,Tp:12,B:42,W:440,H:260,xmax:30,ymax:5,xt:5,yt:1,xl:'الزمن (s)',yl:'حجم O₂ (mL)'};
+const LIVE={L:46,R:70,Tp:12,B:42,W:440,H:260,xmax:TMAX,ymax:5,xt:30,yt:1,xl:'الزمن (s)',yl:'حجم O₂ (mL)'};
 function drawLive(curT){
  live.innerHTML='';const{sx,sy}=axes(live,LIVE);
- const shown=rows.filter(r=>!(running&&r.key===lastKey)).sort((a,b)=>a.o2-b.o2);let ly=1e9;
- shown.forEach(r=>{el('line',{x1:sx(0),y1:sy(0),x2:sx(30),y2:sy(r.o2),stroke:r.col,'stroke-width':2,'stroke-opacity':.55},live);
-  let y=Math.min(sy(r.o2),ly-13);ly=y;tx(live,sx(30)+4,y,vtxt(mode,r.x),{fs:11,a:'start',ltr:1,fill:r.col})});
- if(running){const r=rate(st)/60;
-  el('line',{x1:sx(0),y1:sy(0),x2:sx(curT),y2:sy(r*curT),stroke:css('--date'),'stroke-width':4,'stroke-linecap':'round'},live);
-  el('circle',{cx:sx(curT),cy:sy(r*curT),r:5,fill:css('--date')},live)}
+ // منطقة أول 30 ثانية: منها نحسب المعدل الأولي
+ el('rect',{x:sx(0),y:LIVE.Tp,width:sx(30)-sx(0),height:LIVE.H-LIVE.B-LIVE.Tp,fill:css('--date'),'fill-opacity':.12},live);
+ el('line',{x1:sx(30),y1:LIVE.Tp,x2:sx(30),y2:LIVE.H-LIVE.B,stroke:css('--date'),'stroke-width':1.5,'stroke-dasharray':'4 4'},live);
+ tx(live,sx(15),LIVE.Tp+10,'أول 30 s',{fs:11,fill:css('--date')});
+ const path=(f,t1)=>{const p=[];for(let i=0;i<=60;i++){const t=t1*i/60;p.push(`${sx(t).toFixed(1)},${sy(f(t)).toFixed(1)}`)}return p.join(' ')};
+ const shown=rows.filter(r=>!(running&&r.key===lastKey)).sort((a,b)=>a.f(TMAX)-b.f(TMAX));let ly=1e9;
+ shown.forEach(r=>{el('polyline',{points:path(r.f,TMAX),fill:'none',stroke:r.col,'stroke-width':2,'stroke-opacity':.75},live);
+  el('circle',{cx:sx(30),cy:sy(r.o2),r:4,fill:r.col},live);
+  let y=Math.min(sy(r.f(TMAX)),ly-13);ly=y;tx(live,sx(TMAX)+4,y,vtxt(mode,r.x),{fs:11,a:'start',ltr:1,fill:r.col})});
+ if(running&&curF){
+  el('polyline',{points:path(curF,curT),fill:'none',stroke:css('--date'),'stroke-width':4,'stroke-linecap':'round'},live);
+  el('circle',{cx:sx(curT),cy:sy(curF(curT)),r:5,fill:css('--date')},live)}
  if(!rows.length&&!running)tx(live,(LIVE.L+LIVE.W-LIVE.R)/2,110,mode?'اضغط «ابدأ التفاعل» ليظهر المنحنى':'اختر العامل أولاً',{fs:14,c:'tm'});
 }
 function drawRes(){
@@ -340,17 +350,22 @@ $('#go').onclick=()=>{
  if(rows.some(r=>r.key===key)){say('هذه القيمة مسجّلة في الجدول. حرّك المنزلق إلى قيمة أخرى.','no');return}
  running=true;lastKey=key;$('#go').disabled=true;setTabs(true);setSteps(Math.max(1,rows.length>=4?3:1));
  say('التفاعل يجري... راقبوا الفقاعات والحقنة.');
- const r=rate(st),o2End=Math.round(r/2*10)/10,dur=RM?1500:5200,t0=performance.now();
- const step=now=>{const p=Math.min(1,(now-t0)/dur),sec=p*30;curO2=o2End*p;drawApp(curO2,sec);drawLive(sec);drawGauge(r*p);
-  if(p<1)requestAnimationFrame(step);else finish(o2End)};
+ const r=rate(st),o2End=Math.round(r/2*10)/10,f=vCurve(r,st.S);curF=f;
+ // أول 30 ثانية، ثم توقّف قصير لتسجيل القراءة، ثم بقية الدقائق الثلاث
+ const D1=RM?800:3200,PAUSE=RM?600:1800,D2=RM?900:4200,t0=performance.now();let paused=false;
+ const step=now=>{const e=now-t0;let sec;
+  if(e<D1)sec=30*e/D1;else if(e<D1+PAUSE){sec=30;if(!paused){paused=true;say(`⏸ بعد 30 ثانية: حجم الأكسجين <bdi dir="ltr">${fmt(o2End,1)} mL</bdi>. هذه القراءة نسجّلها لحساب المعدل الأولي. تابعوا المنحنى...`,'ok')}}
+  else sec=Math.min(TMAX,30+(TMAX-30)*(e-D1-PAUSE)/D2);
+  curO2=f(sec);drawApp(curO2,sec);drawLive(sec);drawGauge(r*Math.min(1,sec/30));
+  if(sec<TMAX)requestAnimationFrame(step);else finish(o2End,f)};
  requestAnimationFrame(step);
 };
 function setTabs(dis){document.querySelectorAll('.tab').forEach(b=>b.disabled=dis);for(const k in F)$('#r'+k).disabled=dis||k!==mode}
-function finish(o2){
- running=false;const rt=Math.round(o2*2*10)/10;
- rows.push({key:lastKey,x:st[mode],o2,rate:rt,col:COLORS[rows.length%COLORS.length]});
+function finish(o2,f){
+ running=false;curF=null;const rt=Math.round(o2*2*10)/10;
+ rows.push({key:lastKey,x:st[mode],o2,rate:rt,f,col:COLORS[rows.length%COLORS.length]});
  setTabs(false);$('#go').disabled=false;drawLive(0);drawRes();drawTable();drawGauge(rt);
- say(`بعد 30 ثانية: حجم الأكسجين <bdi dir="ltr">${fmt(o2,1)} mL</bdi>، فالمعدل الأولي = <bdi dir="ltr">${fmt(o2,1)} ÷ 0.5 = ${fmt(rt,1)} mL/min</bdi>. سجّلوا القراءة، ثم جرّبوا قيمة أخرى.`,'ok');
+ say(`بعد 30 ثانية: حجم الأكسجين <bdi dir="ltr">${fmt(o2,1)} mL</bdi>، فالمعدل الأولي = <bdi dir="ltr">${fmt(o2,1)} ÷ 0.5 = ${fmt(rt,1)} mL/min</bdi>. لاحظوا المنحنى: يبدأ حاداً (مستقيماً) ثم يتباطأ ويستقر لأن المادة المتفاعلة تُستهلك. سجّلوا القراءة، ثم جرّبوا قيمة أخرى.`,'ok');
  if(rows.length>=4&&!answered){showQ();setSteps(3)}else setSteps(2);
 }
 
