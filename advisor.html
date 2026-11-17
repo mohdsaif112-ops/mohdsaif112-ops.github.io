@@ -1,0 +1,234 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>لعبة تحدّي المستشار</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#f4efe4;--panel:#fffdf8;--ink:#2a2116;--muted:#6f6352;--line:#e2d6bf;--palm:#0f6b5c;--palm-soft:#dcefe9;--date:#a75c0c;--date-soft:#fbe9d2;--gold:#d99a1e;--ok:#1f7a45;--ok-soft:#dcf1e3;--red:#b3261e;--red-soft:#f8dedb;--asex:#0f6b5c;--sex:#8a3b9e;--sex-soft:#f1e2f5;
+ --ff:"Tajawal",Tahoma,"Segoe UI",sans-serif;--fd:"Reem Kufi","Tajawal",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17130e;--panel:#221c15;--ink:#f3ece0;--muted:#b6a894;--line:#3b3226;--palm:#46b9a2;--palm-soft:#173a33;--date:#f0a33c;--date-soft:#3b2a14;--gold:#f2b84b;--ok:#6cd39a;--ok-soft:#173a26;--red:#ff8a80;--red-soft:#41201d;--asex:#46b9a2;--sex:#d48ae6;--sex-soft:#3a2142;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17130e;--panel:#221c15;--ink:#f3ece0;--muted:#b6a894;--line:#3b3226;--palm:#46b9a2;--palm-soft:#173a33;--date:#f0a33c;--date-soft:#3b2a14;--gold:#f2b84b;--ok:#6cd39a;--ok-soft:#173a26;--red:#ff8a80;--red-soft:#41201d;--asex:#46b9a2;--sex:#d48ae6;--sex-soft:#3a2142;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ff);direction:rtl;font-size:clamp(15px,1.55vw,24px);line-height:1.55;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+.app{max-width:1400px;min-height:100%;margin:0 auto;display:flex;flex-direction:column;gap:.7em;padding-block:.7em}
+/* شريط علوي */
+.top{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
+.brand{font-family:var(--fd);color:var(--palm);font-size:1.35em;line-height:1.2;display:flex;align-items:center;gap:.35em}
+.dots{display:flex;gap:.35em;margin-inline-start:auto;align-items:center}
+.dot{width:1.9em;height:1.9em;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.8em;border:2px solid var(--line);color:var(--muted);background:var(--panel)}
+.dot.done{background:var(--palm);border-color:var(--palm);color:var(--panel)}
+.dot.now{border-color:var(--date);color:var(--date);box-shadow:0 0 0 3px var(--date-soft)}
+.tools{display:flex;gap:.35em}
+.ic{min-width:2.4em;height:2.4em;border-radius:.7em;background:var(--panel);border:1.5px solid var(--line);font-size:.85em;font-weight:700;padding:0 .7em;display:inline-flex;align-items:center;justify-content:center;gap:.3em}
+.ic:hover{border-color:var(--palm)}
+/* الأزرار الرئيسية */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45em;border-radius:1em;padding:.6em 1.4em;font-weight:800;font-size:1.05em;background:var(--palm);color:var(--panel);box-shadow:0 4px 0 color-mix(in srgb,var(--palm) 60%,#000);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--palm) 60%,#000)}
+.btn.alt{background:var(--date);box-shadow:0 4px 0 color-mix(in srgb,var(--date) 60%,#000)}
+.btn.ghost{background:var(--panel);color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.btn.big{font-size:1.3em;padding:.7em 2em}
+/* شاشة البداية */
+.start{flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:1.2em;align-items:center}
+.hero h1{font-family:var(--fd);font-size:2.9em;line-height:1.15;margin:.1em 0;color:var(--palm)}
+.hero p{margin:.2em 0 .8em;color:var(--muted);font-size:1.1em}
+.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:.6em}
+.step{background:var(--panel);border:1.5px solid var(--line);border-radius:1em;padding:.6em .8em;display:flex;gap:.6em;align-items:center;font-weight:700}
+.step b{font-size:1.6em;line-height:1}
+.setup{background:var(--panel);border:2px solid var(--line);border-radius:1.4em;padding:1.1em 1.2em;display:flex;flex-direction:column;gap:.8em}
+.setup h2{margin:0;font-size:1.15em}
+.seg{display:flex;gap:.4em}
+.seg button{flex:1;padding:.45em 0;border-radius:.8em;border:2px solid var(--line);font-weight:800;font-size:1.1em;background:var(--bg)}
+.seg button.on{background:var(--palm);border-color:var(--palm);color:var(--panel)}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:.45em}
+.names input{font:inherit;font-weight:700;padding:.4em .6em;border-radius:.7em;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.pts{font-size:.92em;color:var(--muted);background:var(--date-soft);border-radius:.8em;padding:.5em .8em}
+.pts b{color:var(--date)}
+/* الجولة */
+.stage{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 16em;gap:1em;align-items:stretch}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:1.4em;padding:1em 1.3em;display:flex;flex-direction:column;gap:.6em;position:relative;overflow:hidden}
+.from{display:flex;align-items:center;gap:.6em}
+.av{width:2.6em;height:2.6em;border-radius:50%;background:var(--date-soft);display:grid;place-items:center;font-size:1.4em;flex:none}
+.from .who{font-weight:800;font-size:1.15em}
+.from .rn{font-size:.85em;color:var(--muted)}
+.env{font-size:1.28em;line-height:1.75;margin:0;padding:.2em .2em .2em 0;border-right:5px solid var(--gold);padding-right:.8em}
+.side{display:flex;flex-direction:column;gap:.8em;align-items:stretch;justify-content:center}
+.timer{position:relative;width:100%;aspect-ratio:1;max-width:15em;margin:0 auto}
+.timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer .tr{fill:none;stroke:var(--line);stroke-width:10}
+.timer .tv{fill:none;stroke:var(--palm);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.timer.warn .tv{stroke:var(--date)}
+.timer .num{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--fd);font-size:3.4em;color:var(--ink);line-height:1}
+.timer .lbl{position:absolute;bottom:22%;inset-inline:0;text-align:center;font-size:.8em;color:var(--muted);font-weight:700}
+.timer.warn .num{color:var(--date);animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+/* الإجابة */
+.ans{border-top:2px dashed var(--line);padding-top:.7em;display:flex;flex-direction:column;gap:.5em;animation:rise .45s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.typ{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
+.chip{font-weight:800;border-radius:2em;padding:.25em 1em;font-size:1.25em}
+.chip.asex{background:var(--palm-soft);color:var(--asex)}
+.chip.sex{background:var(--sex-soft);color:var(--sex)}
+.why{display:flex;flex-direction:column;gap:.3em}
+.why div{display:flex;gap:.55em;align-items:baseline;font-weight:700}
+.why .L{flex:none;min-width:1.9em;height:1.9em;border-radius:.6em;background:var(--date);color:var(--panel);display:grid;place-items:center;font-weight:800}
+.note{font-size:.9em;color:var(--muted)}
+.adv{background:var(--ok-soft);border-radius:1em;padding:.55em .9em;font-weight:800;color:var(--ok);animation:rise .45s ease-out}
+.adv small{display:block;color:var(--muted);font-weight:500;font-size:.75em;margin-top:.2em}
+/* لوحة النقاط */
+.board{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:.5em}
+.g{background:var(--panel);border:2px solid var(--line);border-radius:1em;padding:.45em .5em;display:flex;flex-direction:column;gap:.35em;position:relative;transition:border-color .3s}
+.g.lead{border-color:var(--gold)}
+.g .hd{display:flex;align-items:center;justify-content:space-between;gap:.3em}
+.g .nm{font-weight:800;font-size:.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g .sc{font-family:var(--fd);font-size:1.6em;line-height:1;color:var(--palm)}
+.g .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:.25em}
+.tg button{border-radius:.6em;border:1.5px solid var(--line);font-size:.72em;font-weight:800;padding:.35em 0;background:var(--bg);color:var(--muted);line-height:1.2}
+.tg button.on{background:var(--ok);border-color:var(--ok);color:var(--panel)}
+.tg button.on.star{background:var(--gold);border-color:var(--gold)}
+.fly{direction:ltr;unicode-bidi:isolate;position:absolute;top:-.4em;left:50%;font-family:var(--fd);color:var(--ok);font-size:1.4em;pointer-events:none;animation:fly 1s ease-out forwards}
+@keyframes fly{to{transform:translateY(-1.6em);opacity:0}}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:.6em;flex-wrap:wrap}
+.hint{color:var(--muted);font-size:.85em}
+/* العد 3، 2، 1 */
+.over{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 88%,transparent);display:grid;place-items:center;z-index:20;backdrop-filter:blur(3px)}
+.cd{font-family:var(--fd);font-size:min(38vw,38vh);color:var(--date);line-height:1;animation:pop .85s ease-out}
+.cd.go{font-size:min(15vw,22vh);color:var(--palm)}
+@keyframes pop{from{transform:scale(2.2);opacity:0}30%{opacity:1}to{transform:scale(1)}}
+/* البنك */
+.bank{background:var(--panel);border:2px solid var(--line);border-radius:1.4em;padding:1.1em 1.3em;max-width:62em;width:calc(100% - 32px);max-height:90vh;overflow:auto}
+.bank h2{margin:0 0 .6em;font-family:var(--fd);color:var(--palm)}
+.bg{display:grid;grid-template-columns:1fr 1fr;gap:.7em}
+.bg section{border:1.5px solid var(--line);border-radius:1em;padding:.6em .8em}
+.bg h3{margin:0 0 .3em;font-size:1em}
+.bg .asexh{color:var(--asex)}.bg .sexh{color:var(--sex)}
+.bg p{margin:.15em 0;font-weight:700;display:flex;gap:.5em}
+.bg p b{color:var(--date);min-width:1.6em}
+/* النتيجة */
+.final{flex:1;display:flex;flex-direction:column;align-items:center;gap:.7em;text-align:center}
+.final h1{font-family:var(--fd);color:var(--palm);font-size:2.1em;margin:0}
+.bars{display:flex;align-items:flex-end;justify-content:center;gap:1em;width:100%;height:34vh;min-height:10em}
+.bar{flex:1;max-width:9em;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:.3em}
+.bar .col{flex:none;width:100%;border-radius:.9em .9em .3em .3em;background:var(--palm-soft);border:2px solid var(--palm);height:0;transition:height 1.4s cubic-bezier(.2,.8,.2,1);display:flex;align-items:flex-start;justify-content:center;padding-top:.3em;font-family:var(--fd);font-size:1.6em;color:var(--palm)}
+.bar.win .col{background:var(--date-soft);border-color:var(--gold);color:var(--date)}
+.bar .nm{font-weight:800;white-space:nowrap;font-size:.9em}
+.stamp{position:relative;width:7em;height:7em;border-radius:50%;border:.28em dashed var(--red);color:var(--red);display:grid;place-items:center;font-family:var(--fd);font-size:1.15em;line-height:1.25;transform:rotate(-12deg);animation:slam .6s cubic-bezier(.3,1.6,.5,1) both;animation-delay:1.5s}
+.stamp::before{content:"";position:absolute;inset:.35em;border-radius:50%;border:2px solid var(--red)}
+@keyframes slam{from{transform:rotate(-12deg) scale(3);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
+.winner{font-size:1.3em;font-weight:800}
+canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:30}
+@media (max-width:900px){.start,.stage{grid-template-columns:1fr}.board{grid-template-columns:repeat(3,minmax(0,1fr))}.timer{max-width:10em}.hero h1{font-size:2.1em}}
+@media (max-width:520px){.steps,.names,.bg{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head><body>
+<div class="app">
+ <header class="top">
+  <div class="brand">✉️ تحدّي المستشار</div>
+  <div class="dots" id="dots"></div>
+  <div class="tools">
+   <button class="ic" id="bBank" title="بنك المزايا والعيوب">📋 البنك</button>
+   <button class="ic" id="bSnd" title="الصوت">🔊</button>
+   <button class="ic" id="bFs" title="ملء الشاشة">⛶</button>
+   <button class="ic" id="bNew" title="لعبة جديدة">↺</button>
+  </div>
+ </header>
+ <main id="view" class="app" style="padding:0;flex:1"></main>
+</div>
+<div class="over" id="ov" hidden></div>
+<canvas id="cf" hidden></canvas>
+<script>
+const DATA={"rounds": [{"who": "أبو سالم، مزارع من الباطنة", "text": "عزيزي المستشار، عندي نخلة خلاص تمرها أحلى من حلوى زوجتي (أرجو ألّا تخبروها!)، وتنمو أحسن نمو في مزرعتي، وبجانبها أرض واسعة فارغة. أريد نخيلاً مثلها تماماً، لا يزيد ولا ينقص. هل أزرع نوى تمرها أم فسائلها؟ ولماذا؟ وأرجو الرد قبل أن ينتهي التمر!", "advice": "ازرع الفسائل؛ لأنها تعطي نخيلاً مطابقاً للنخلة الأم المتكيّفة.", "line": "سيكون نسله إذا ورث الجينات نفسها متكيّفاً أيضاً بشكل جيد».", "type": "لاجنسي", "letters": ["أ"], "note": "", "icon": "🌴"}, {"who": "حمد، راعي غنم من عبري", "text": "غنمي تحب قرون السمر أكثر مما تحبني! تأكلها ثم تمشي بعيداً، وبعد أشهر تنبت أشجار سمر جديدة في أماكن لم يكن فيها شيء، والرياح أيضاً تحمل البذور. ما نوع التكاثر هنا؟ وما فائدة انتشار البذور بعيداً عن الشجرة الأم؟ وهل تستحق غنمي مكافأة؟", "advice": "تكاثر جنسي؛ وانتشار البذور يقلّل التنافس ويوصل السمر إلى أماكن جديدة.", "line": "يكون أقل احتمالاً للتنافس معهما، كما يمكنه أن يستوطن مناطق جديدة».", "type": "جنسي", "letters": ["و"], "note": "", "icon": "🐐"}, {"who": "سعيد، باحث بيئي", "text": "أكتب إليكم من جزيرة صغيرة معزولة، ليس فيها إلا أنا وسلحفاة كسولة ونبتة نادرة واحدة. لا حشرات، ولا نبتة أخرى من نوعها، والمسكينة تبدو وحيدة جداً. أي نوع من التكاثر يناسبها لتزيد أعدادها؟ ولماذا؟ (السلحفاة لا تساعد في شيء).", "advice": "التكاثر اللاجنسي؛ لأنها تتكاثر وحدها دون تلقيح أو فرد آخر.", "line": "يمكنه أن يتكاثر ذاتياً، دون أن يحتاج للتلقيح أو إيجاد فرد آخر».", "type": "لاجنسي", "letters": ["ب"], "note": "", "icon": "🏝️"}, {"who": "أم خالد، مزارعة من الداخلية", "text": "كل نخيل مزرعتي فسائل من نخلة واحدة، كأنها توائم متطابقة: الطول نفسه والتمر نفسه، وحتى الميلة نفسها! وسمعت اليوم أن آفة جديدة وصلت إلى منطقتنا، فقال ابني: «لا تقلقي يا أمي، نخيلنا قوي». هل كلامه صحيح؟ هل نخيلي كله في خطر؟ ولماذا؟ وأي نوع من التكاثر كان سيقلّل الخطر؟", "advice": "نعم، كله في خطر لأنه بلا تنوع جيني؛ والتكاثر الجنسي كان سيقلّل الخطر.", "line": "إذا ظهر مرض جديد أو آفة جديدة ... يُفضَّل أن يكون النسل مختلفاً جينياً عن أبويه».", "type": "جنسي", "letters": ["ج", "هـ"], "note": "نخيلها لاجنسي فهو عرضة للآفة (ج)، والجنسي كان سيقلّل الخطر (هـ).", "icon": "🌴"}, {"who": "مريم، مزارعة من الجبل الأخضر", "text": "عندي شجرة رمان مشهورة في القرية، فأخذت منها عُقلاً كثيرة وزرعتها كلها حول الشجرة الأم في مساحة ضيقة، كأنها أطفال لا يريدون الابتعاد عن أمهم! وبعد سنتين صارت الشتلات ضعيفة ومتزاحمة. ما سبب ضعفها؟ وبماذا تنصحني؟", "advice": "ضعفت من الازدحام والتنافس قرب الأم؛ ازرعي العُقل متباعدة.", "line": "لن يكون مناسباً للأبوين إنتاج نسل جديد، إذا كانت المنطقة مزدحمة».", "type": "لاجنسي", "letters": ["د"], "note": "", "icon": "🌱"}, {"who": "خالد، مهندس زراعي", "text": "جاري يرش المبيدات على كل شيء يتحرك، حتى على الفراشات! والنتيجة أن نباتاً برياً في منطقتنا كانت تلقّحه حشرة واحدة فقط، وصارت هذه الحشرة نادرة. ما المشكلة التي ستواجه تكاثره الجنسي؟ ولو تكاثر لاجنسياً، فما الميزة؟ وما العيب؟", "advice": "سيقلّ تكاثره الجنسي لأنه يعتمد على الحشرة؛ واللاجنسي لا يحتاج تلقيحاً لكنه بلا تنوع جيني.", "line": "يمكنه أن يتكاثر ذاتياً، دون أن يحتاج للتلقيح» و«لا يُنتج التكاثر اللاجنسي تنوعاً جينياً».", "type": "جنسي", "letters": ["ز"], "note": "ولو تكاثر النبات لاجنسياً لنجا من هذه المشكلة: (ب)، لكن بلا تنوع جيني: (ج).", "icon": "🐝"}], "bank": [["أ", "النسل متكيّف مع بيئته مثل النبات الأم."], ["ب", "لا يحتاج إلى تلقيح أو إلى فرد آخر."], ["ج", "لا تنوع جيني، فالنسل عرضة لمرض جديد أو تغيّر البيئة."], ["د", "ازدحام وتنافس قرب النبات الأم."], ["هـ", "تنوع جيني: قد ينجو بعض النسل من مرض جديد."], ["و", "انتشار البذور: يقل التنافس ويستوطن النسل مناطق جديدة."], ["ز", "يعتمد على التلقيح بالرياح أو الحشرات."], ["ح", "يتطلب عادة نباتاً آخر."]]};
+const R=DATA.rounds, BANK=DATA.bank, SECS=45, KEY='advisor-game-v1';
+const $=s=>document.querySelector(s), view=$('#view'), ov=$('#ov');
+let S=load()||fresh();
+function fresh(){return{phase:'start',n:6,names:[1,2,3,4,5,6].map(i=>'المجموعة '+i),r:0,step:0,pts:[]}}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&v.phase?v:null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function total(g){return S.pts.reduce((a,row)=>a+(row&&row[g]?row[g].reduce((x,y)=>x+y,0):0),0)}
+function ptsRow(r){if(!S.pts[r])S.pts[r]=Array.from({length:S.n},()=>[0,0,0]);return S.pts[r]}
+/* صوت */
+let snd=true,ac;function beep(f,d,v){if(!snd)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type='triangle';g.gain.value=v||.15;o.connect(g);g.connect(ac.destination);const t=ac.currentTime;g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d)}catch(e){}}
+function fanfare(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.35,.2),i*150))}
+/* النقاط المضيئة للجولات */
+function dots(){$('#dots').innerHTML=S.phase==='start'?'':R.map((_,i)=>`<span class="dot ${i<S.r||S.phase==='final'?'done':''} ${i===S.r&&S.phase==='round'?'now':''}">${i+1}</span>`).join('')}
+/* البداية */
+function vStart(){
+ view.innerHTML=`<div class="start"><div class="hero"><h1>تحدّي المستشار</h1><p>مزارعون من عُمان أرسلوا رسائل يطلبون نصيحتكم: أي نوع من التكاثر يناسبهم؟ ولماذا؟</p>
+ <div class="steps"><div class="step"><b>✉️</b>رسالة مزارع على الشاشة</div><div class="step"><b>⏱️</b>45 ثانية تشاور</div><div class="step"><b>🔤</b>اكتبوا النوع وحرف السبب من البنك</div><div class="step"><b>✋</b>ارفعوا الورقة عند «3، 2، 1»</div></div></div>
+ <div class="setup"><h2>عدد المجموعات</h2><div class="seg" id="seg">${[3,4,5,6].map(k=>`<button data-k="${k}" class="${k===S.n?'on':''}">${k}</button>`).join('')}</div>
+ <h2>أسماء المجموعات</h2><div class="names" id="nm">${Array.from({length:S.n},(_,i)=>`<input data-i="${i}" value="${esc(S.names[i]||'المجموعة '+(i+1))}" aria-label="اسم المجموعة ${i+1}">`).join('')}</div>
+ <div class="pts">النقاط في كل جولة: <b>+1</b> للنوع الصحيح، و<b>+1</b> للحرف الصحيح، و<b>+1</b> إضافية للنصيحة الصحيحة. والفائز يحصل على ختم «مستشار معتمد».</div>
+ <button class="btn big" id="go">ابدأ اللعبة ◀</button></div></div>`;
+ $('#seg').onclick=e=>{const k=+e.target.dataset.k;if(!k)return;S.n=k;vStart()};
+ $('#nm').oninput=e=>{const i=+e.target.dataset.i;S.names[i]=e.target.value.trim()||('المجموعة '+(i+1));save()};
+ $('#go').onclick=()=>{S.names=S.names.slice(0,S.n);while(S.names.length<S.n)S.names.push('المجموعة '+(S.names.length+1));S.pts=[];S.r=0;S.step=0;S.phase='round';save();render()};
+}
+/* الجولة: step 0 الرسالة، 1 العد، 2 الإجابة، 3 النصيحة */
+let tmr=null,left=SECS;
+function vRound(){
+ const d=R[S.r], last=S.r===R.length-1;
+ const ans=S.step>=2?`<div class="ans"><div class="typ"><span class="note">نوع التكاثر:</span><span class="chip ${d.type==='جنسي'?'sex':'asex'}">${d.type==='جنسي'?'تكاثر جنسي':'تكاثر لاجنسي'}</span></div>
+  <div class="why">${d.letters.map(L=>`<div><span class="L">${L}</span>${esc(BANK.find(b=>b[0]===L)[1])}</div>`).join('')}${d.note?`<span class="note">${esc(d.note)}</span>`:''}</div>
+  ${S.step>=3?`<div class="adv">النصيحة: ${esc(d.advice)}<small>من الكتاب ص 63: ${esc(d.line)}</small></div>`:''}</div>`:'';
+ const act=S.step===0?`<button class="btn big" id="act">⏱️ ابدأ التشاور</button>`:S.step===1?`<button class="btn big alt" id="act">🔍 اكشف الإجابة</button>`:S.step===2?`<button class="btn big" id="act">💡 أظهر النصيحة</button>`:`<button class="btn big alt" id="act">${last?'🏆 النتيجة النهائية':'الجولة التالية ◀'}</button>`;
+ const row=ptsRow(S.r), canScore=S.step>=2, mx=Math.max(...Array.from({length:S.n},(_,g)=>total(g)));
+ view.innerHTML=`<div class="stage"><div class="card"><div class="from"><span class="av">${d.icon}</span><div><div class="who">${esc(d.who)}</div><div class="rn">الجولة ${S.r+1} من ${R.length} · رسالة إلى المستشار</div></div></div>
+  <p class="env">«${esc(d.text)}»</p>${ans}</div>
+  <div class="side"><div class="timer" id="tm"><svg viewBox="0 0 120 120"><circle class="tr" cx="60" cy="60" r="52"/><circle class="tv" id="tv" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg><div class="num" id="tn">${S.step===0?SECS:0}</div><div class="lbl">ثانية</div></div>${act}
+  ${S.step===0?'<button class="btn ghost" id="skip" hidden>انتهينا مبكراً ⏭</button>':''}</div></div>
+  <div class="board" style="--n:${S.n}">${Array.from({length:S.n},(_,g)=>{const t=total(g);return `<div class="g ${t&&t===mx?'lead':''}" data-g="${g}"><div class="hd"><span class="nm">${esc(S.names[g])}</span><span class="sc">${t}</span></div>
+   ${canScore?`<div class="tg">${['النوع','الحرف','⭐ النصيحة'].map((l,k)=>`<button data-g="${g}" data-k="${k}" class="${row[g][k]?'on':''} ${k===2?'star':''}" aria-pressed="${!!row[g][k]}">${l}</button>`).join('')}</div>`:''}</div>`}).join('')}</div>
+  <div class="foot"><span class="hint">${S.step<2?'المجموعات تكتب النوع والحرف في جدول الجولات، ثم ترفع الورقة معاً.':'اضغط على ما أصابت فيه كل مجموعة. والنقطة الإضافية لمتحدث يُختار عشوائياً.'}</span>${S.r>0||S.step>0?'<button class="ic" id="back">↩ رجوع</button>':''}</div>`;
+ if(S.step>=1){$('#tv').style.strokeDashoffset=326.7}
+ $('#act').onclick=primary;
+ const bk=$('#back');if(bk)bk.onclick=backStep;
+ view.querySelectorAll('.tg button').forEach(b=>b.onclick=()=>{const g=+b.dataset.g,k=+b.dataset.k;row[g][k]=row[g][k]?0:1;save();
+  const on=row[g][k];b.classList.toggle('on',!!on);b.setAttribute('aria-pressed',!!on);const card=b.closest('.g');card.querySelector('.sc').textContent=total(g);
+  if(on){beep(880,.18);const f=document.createElement('span');f.className='fly';f.textContent='+1';card.appendChild(f);setTimeout(()=>f.remove(),1000)}
+  const m=Math.max(...Array.from({length:S.n},(_,i)=>total(i)));view.querySelectorAll('.g').forEach(c=>{const t=total(+c.dataset.g);c.classList.toggle('lead',t>0&&t===m)})});
+}
+function primary(){
+ if(S.phase==='start'){$('#go').click();return}
+ if(S.phase!=='round')return;
+ if(S.step===0){if(tmr){finishTimer();return}startTimer();return}
+ if(S.step<3){S.step++;if(S.step===2)beep(660,.25);save();render();return}
+ if(S.r<R.length-1){S.r++;S.step=0}else{S.phase='final'}save();render();
+}
+function backStep(){stopTimer();if(S.step>0)S.step=S.step===2?0:S.step-1;else if(S.r>0){S.r--;S.step=3}save();render()}
+function startTimer(){left=SECS;const tn=$('#tn'),tv=$('#tv'),tm=$('#tm');$('#act').textContent='⏱️ تشاوروا...';$('#skip').hidden=false;$('#skip').onclick=finishTimer;beep(520,.2);
+ tmr=setInterval(()=>{left--;tn.textContent=left;tv.style.strokeDashoffset=326.7*(1-left/SECS);if(left<=10)tm.classList.add('warn');if(left<=5&&left>0)beep(700,.12);if(left<=0)finishTimer()},1000)}
+function stopTimer(){if(tmr){clearInterval(tmr);tmr=null}}
+function finishTimer(){stopTimer();const seq=['3','2','1','ارفعوا!'];let i=0;ov.hidden=false;
+ (function nx(){if(i<seq.length){ov.innerHTML=`<div class="cd ${i===3?'go':''}">${seq[i]}</div>`;beep(i===3?1047:600,i===3?.5:.2,.22);i++;setTimeout(nx,i===4?1300:900)}else{ov.hidden=true;S.step=1;save();render()}})()}
+/* النتيجة */
+function vFinal(){
+ const tot=Array.from({length:S.n},(_,g)=>total(g)), mx=Math.max(...tot,1), top=Math.max(...tot), win=tot.map((t,g)=>t===top&&t>0?g:-1).filter(g=>g>=0);
+ view.innerHTML=`<div class="final"><h1>🏆 النتيجة النهائية</h1>
+ <div class="bars">${tot.map((t,g)=>`<div class="bar ${win.includes(g)?'win':''}"><div class="col" data-h="${t/mx*100}">${t}</div><div class="nm">${esc(S.names[g])}</div></div>`).join('')}</div>
+ ${win.length?`<div style="display:flex;align-items:center;gap:1.4em;flex-wrap:wrap;justify-content:center"><div class="stamp">مستشار<br>معتمد ✔</div><div class="winner">مبروك ${win.map(g=>esc(S.names[g])).join(' و')}!<br><span class="hint">${win.length>1?'تعادل في الصدارة: الختم للجميع':'تحصل على ختم «مستشار معتمد»'}</span></div></div>`:''}
+ <div style="display:flex;gap:.6em"><button class="btn ghost" id="back">↩ رجوع إلى الجولة 6</button><button class="btn" id="again">↺ لعبة جديدة</button></div></div>`;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>view.querySelectorAll('.col').forEach(c=>c.style.height='calc(2.4em + '+(c.dataset.h*.8)+'%)')));
+ $('#back').onclick=()=>{S.phase='round';S.r=R.length-1;S.step=3;save();render()};
+ $('#again').onclick=newGame;
+ if(win.length)setTimeout(()=>{fanfare();confetti()},1500);
+}
+function confetti(){const c=$('#cf'),x=c.getContext('2d');c.hidden=false;c.width=innerWidth;c.height=innerHeight;const cols=['#0f6b5c','#d99a1e','#a75c0c','#8a3b9e','#1f7a45','#b3261e'];
+ const P=Array.from({length:160},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,v:2+Math.random()*3,a:Math.random()*6,s:5+Math.random()*7,c:cols[Math.random()*6|0]}));let t=0;
+ (function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.a+=.08;x.save();x.translate(p.x+Math.sin(p.a)*12,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});if(++t<330)requestAnimationFrame(f);else c.hidden=true})()}
+/* البنك */
+function showBank(){const sec=(h,cl,ls)=>`<section><h3 class="${cl}">${h}</h3>${ls.map(L=>`<p><b>(${L})</b>${esc(BANK.find(b=>b[0]===L)[1])}</p>`).join('')}</section>`;
+ ov.hidden=false;ov.innerHTML=`<div class="bank" role="dialog" aria-label="بنك المزايا والعيوب"><h2>بنك المزايا والعيوب (ص 63)</h2><div class="bg">${sec('مزايا التكاثر اللاجنسي','asexh',['أ','ب'])}${sec('عيوب التكاثر اللاجنسي','asexh',['ج','د'])}${sec('مزايا التكاثر الجنسي','sexh',['هـ','و'])}${sec('عيوب التكاثر الجنسي','sexh',['ز','ح'])}</div><div style="text-align:center;margin-top:.8em"><button class="btn" id="cb">إغلاق</button></div></div>`;
+ $('#cb').onclick=()=>{ov.hidden=true};ov.onclick=e=>{if(e.target===ov)ov.hidden=true}}
+function newGame(){if(S.phase!=='start'&&!confirm('بدء لعبة جديدة ومسح النقاط؟'))return;stopTimer();const n=S.n,names=S.names;S=fresh();S.n=n;S.names=names.concat(fresh().names.slice(names.length));save();render()}
+function render(){dots();if(S.phase==='start')vStart();else if(S.phase==='round')vRound();else vFinal()}
+$('#bBank').onclick=showBank;
+$('#bSnd').onclick=e=>{snd=!snd;e.currentTarget.textContent=snd?'🔊':'🔇'};
+$('#bFs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+$('#bNew').onclick=newGame;
+/* جهاز التحكم بالعرض (Clicker) ولوحة المفاتيح */
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(!ov.hidden&&ov.querySelector('.bank')){if(e.key==='Escape')ov.hidden=true;return}if(!ov.hidden)return;
+ if(['PageDown','ArrowLeft','ArrowDown',' ','Enter'].includes(e.key)){e.preventDefault();primary()}else if(['PageUp','ArrowRight','ArrowUp'].includes(e.key)&&S.phase==='round'){e.preventDefault();backStep()}});
+render();
+</script>
+<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+</body></html>
