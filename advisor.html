@@ -30,19 +30,19 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 .btn.big{font-size:1.3em;padding:.7em 2em}
 /* شاشة البداية */
 .start{flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:1.2em;align-items:center}
-.hero h1{font-family:var(--fd);font-size:2.9em;line-height:1.15;margin:.1em 0;color:var(--palm)}
+.hero h1{font-family:var(--fd);font-size:2.5em;line-height:1.15;margin:.1em 0;color:var(--palm)}
 .hero p{margin:.2em 0 .8em;color:var(--muted);font-size:1.1em}
 .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:.6em}
 .step{background:var(--panel);border:1.5px solid var(--line);border-radius:1em;padding:.6em .8em;display:flex;gap:.6em;align-items:center;font-weight:700}
 .step b{font-size:1.6em;line-height:1}
-.setup{background:var(--panel);border:2px solid var(--line);border-radius:1.4em;padding:1.1em 1.2em;display:flex;flex-direction:column;gap:.8em}
+.setup{background:var(--panel);border:2px solid var(--line);border-radius:1.4em;padding:.9em 1.1em;display:flex;flex-direction:column;gap:.5em}
 .setup h2{margin:0;font-size:1.15em}
 .seg{display:flex;gap:.4em}
-.seg button{flex:1;padding:.45em 0;border-radius:.8em;border:2px solid var(--line);font-weight:800;font-size:1.1em;background:var(--bg)}
+.seg button{flex:1;padding:.35em 0;border-radius:.8em;border:2px solid var(--line);font-weight:800;font-size:1.1em;background:var(--bg)}
 .seg button.on{background:var(--palm);border-color:var(--palm);color:var(--panel)}
-.names{display:grid;grid-template-columns:1fr 1fr;gap:.45em}
+.names{display:grid;grid-template-columns:repeat(3,1fr);gap:.4em}
 .names input{font:inherit;font-weight:700;padding:.4em .6em;border-radius:.7em;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%;min-width:0}
-.pts{font-size:.92em;color:var(--muted);background:var(--date-soft);border-radius:.8em;padding:.5em .8em}
+.pts{font-size:.8em;line-height:1.5;color:var(--muted);background:var(--date-soft);border-radius:.8em;padding:.5em .8em}
 .pts b{color:var(--date)}
 /* الجولة */
 .stage{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 16em;gap:1em;align-items:stretch}
@@ -76,7 +76,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 .adv{background:var(--ok-soft);border-radius:1em;padding:.55em .9em;font-weight:800;color:var(--ok);animation:rise .45s ease-out}
 .adv small{display:block;color:var(--muted);font-weight:500;font-size:.75em;margin-top:.2em}
 /* لوحة النقاط */
-.board{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:.5em}
+.board{margin-top:.5em;display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:.5em}
 .g{background:var(--panel);border:2px solid var(--line);border-radius:1em;padding:.45em .5em;display:flex;flex-direction:column;gap:.35em;position:relative;transition:border-color .3s}
 .g.lead{border-color:var(--gold)}
 .g .hd{display:flex;align-items:center;justify-content:space-between;gap:.3em}
@@ -90,6 +90,18 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-
 @keyframes fly{to{transform:translateY(-1.6em);opacity:0}}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:.6em;flex-wrap:wrap}
 .hint{color:var(--muted);font-size:.85em}
+/* من يجيب؟ */
+.g.spin{border-color:var(--date);box-shadow:0 0 0 4px var(--date-soft)}
+.g.pick{border-color:var(--date);box-shadow:0 0 0 4px var(--date-soft);transform:translateY(-4px)}
+.g .mic{position:absolute;top:-1.15em;inset-inline-start:.5em;background:var(--date);color:var(--panel);font-size:.72em;font-weight:800;border-radius:1em;padding:.05em .6em}
+.tg span{border-radius:.6em;border:1.5px dashed var(--line)}
+.turn{display:flex;align-items:center;gap:.6em;background:var(--date-soft);border-radius:1em;padding:.5em .9em;font-weight:800;animation:rise .45s ease-out}
+.turn b{color:var(--date)}
+.turn small{display:block;font-weight:500;color:var(--muted)}
+.ann{background:var(--panel);border:3px solid var(--date);border-radius:1.6em;padding:1em 2em;text-align:center;animation:pop .6s ease-out}
+.ann .a1{font-size:1.2em;color:var(--muted);font-weight:700}
+.ann .a2{font-family:var(--fd);font-size:3.2em;color:var(--date);line-height:1.2}
+.ann .a3{font-size:2em;font-weight:800}
 /* العد 3، 2، 1 */
 .over{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 88%,transparent);display:grid;place-items:center;z-index:20;backdrop-filter:blur(3px)}
 .cd{font-family:var(--fd);font-size:min(38vw,38vh);color:var(--date);line-height:1;animation:pop .85s ease-out}
@@ -137,10 +149,10 @@ canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:30}
 <canvas id="cf" hidden></canvas>
 <script>
 const DATA={"rounds": [{"who": "أبو سالم، مزارع من الباطنة", "text": "عزيزي المستشار، عندي نخلة خلاص تمرها أحلى من حلوى زوجتي (أرجو ألّا تخبروها!)، وتنمو أحسن نمو في مزرعتي، وبجانبها أرض واسعة فارغة. أريد نخيلاً مثلها تماماً، لا يزيد ولا ينقص. هل أزرع نوى تمرها أم فسائلها؟ ولماذا؟ وأرجو الرد قبل أن ينتهي التمر!", "advice": "ازرع الفسائل؛ لأنها تعطي نخيلاً مطابقاً للنخلة الأم المتكيّفة.", "line": "سيكون نسله إذا ورث الجينات نفسها متكيّفاً أيضاً بشكل جيد».", "type": "لاجنسي", "letters": ["أ"], "note": "", "icon": "🌴"}, {"who": "حمد، راعي غنم من عبري", "text": "غنمي تحب قرون السمر أكثر مما تحبني! تأكلها ثم تمشي بعيداً، وبعد أشهر تنبت أشجار سمر جديدة في أماكن لم يكن فيها شيء، والرياح أيضاً تحمل البذور. ما نوع التكاثر هنا؟ وما فائدة انتشار البذور بعيداً عن الشجرة الأم؟ وهل تستحق غنمي مكافأة؟", "advice": "تكاثر جنسي؛ وانتشار البذور يقلّل التنافس ويوصل السمر إلى أماكن جديدة.", "line": "يكون أقل احتمالاً للتنافس معهما، كما يمكنه أن يستوطن مناطق جديدة».", "type": "جنسي", "letters": ["و"], "note": "", "icon": "🐐"}, {"who": "سعيد، باحث بيئي", "text": "أكتب إليكم من جزيرة صغيرة معزولة، ليس فيها إلا أنا وسلحفاة كسولة ونبتة نادرة واحدة. لا حشرات، ولا نبتة أخرى من نوعها، والمسكينة تبدو وحيدة جداً. أي نوع من التكاثر يناسبها لتزيد أعدادها؟ ولماذا؟ (السلحفاة لا تساعد في شيء).", "advice": "التكاثر اللاجنسي؛ لأنها تتكاثر وحدها دون تلقيح أو فرد آخر.", "line": "يمكنه أن يتكاثر ذاتياً، دون أن يحتاج للتلقيح أو إيجاد فرد آخر».", "type": "لاجنسي", "letters": ["ب"], "note": "", "icon": "🏝️"}, {"who": "أم خالد، مزارعة من الداخلية", "text": "كل نخيل مزرعتي فسائل من نخلة واحدة، كأنها توائم متطابقة: الطول نفسه والتمر نفسه، وحتى الميلة نفسها! وسمعت اليوم أن آفة جديدة وصلت إلى منطقتنا، فقال ابني: «لا تقلقي يا أمي، نخيلنا قوي». هل كلامه صحيح؟ هل نخيلي كله في خطر؟ ولماذا؟ وأي نوع من التكاثر كان سيقلّل الخطر؟", "advice": "نعم، كله في خطر لأنه بلا تنوع جيني؛ والتكاثر الجنسي كان سيقلّل الخطر.", "line": "إذا ظهر مرض جديد أو آفة جديدة ... يُفضَّل أن يكون النسل مختلفاً جينياً عن أبويه».", "type": "جنسي", "letters": ["ج", "هـ"], "note": "نخيلها لاجنسي فهو عرضة للآفة (ج)، والجنسي كان سيقلّل الخطر (هـ).", "icon": "🌴"}, {"who": "مريم، مزارعة من الجبل الأخضر", "text": "عندي شجرة رمان مشهورة في القرية، فأخذت منها عُقلاً كثيرة وزرعتها كلها حول الشجرة الأم في مساحة ضيقة، كأنها أطفال لا يريدون الابتعاد عن أمهم! وبعد سنتين صارت الشتلات ضعيفة ومتزاحمة. ما سبب ضعفها؟ وبماذا تنصحني؟", "advice": "ضعفت من الازدحام والتنافس قرب الأم؛ ازرعي العُقل متباعدة.", "line": "لن يكون مناسباً للأبوين إنتاج نسل جديد، إذا كانت المنطقة مزدحمة».", "type": "لاجنسي", "letters": ["د"], "note": "", "icon": "🌱"}, {"who": "خالد، مهندس زراعي", "text": "جاري يرش المبيدات على كل شيء يتحرك، حتى على الفراشات! والنتيجة أن نباتاً برياً في منطقتنا كانت تلقّحه حشرة واحدة فقط، وصارت هذه الحشرة نادرة. ما المشكلة التي ستواجه تكاثره الجنسي؟ ولو تكاثر لاجنسياً، فما الميزة؟ وما العيب؟", "advice": "سيقلّ تكاثره الجنسي لأنه يعتمد على الحشرة؛ واللاجنسي لا يحتاج تلقيحاً لكنه بلا تنوع جيني.", "line": "يمكنه أن يتكاثر ذاتياً، دون أن يحتاج للتلقيح» و«لا يُنتج التكاثر اللاجنسي تنوعاً جينياً».", "type": "جنسي", "letters": ["ز"], "note": "ولو تكاثر النبات لاجنسياً لنجا من هذه المشكلة: (ب)، لكن بلا تنوع جيني: (ج).", "icon": "🐝"}], "bank": [["أ", "النسل متكيّف مع بيئته مثل النبات الأم."], ["ب", "لا يحتاج إلى تلقيح أو إلى فرد آخر."], ["ج", "لا تنوع جيني، فالنسل عرضة لمرض جديد أو تغيّر البيئة."], ["د", "ازدحام وتنافس قرب النبات الأم."], ["هـ", "تنوع جيني: قد ينجو بعض النسل من مرض جديد."], ["و", "انتشار البذور: يقل التنافس ويستوطن النسل مناطق جديدة."], ["ز", "يعتمد على التلقيح بالرياح أو الحشرات."], ["ح", "يتطلب عادة نباتاً آخر."]]};
-const R=DATA.rounds, BANK=DATA.bank, SECS=45, KEY='advisor-game-v1';
+const R=DATA.rounds, BANK=DATA.bank, SECS=45, KEY='advisor-game-v2', ROLES=['القارئ','الكاتب','المتحدث','مراقب الوقت'];
 const $=s=>document.querySelector(s), view=$('#view'), ov=$('#ov');
 let S=load()||fresh();
-function fresh(){return{phase:'start',n:6,names:[1,2,3,4,5,6].map(i=>'المجموعة '+i),r:0,step:0,pts:[]}}
+function fresh(){return{phase:'start',n:6,names:[1,2,3,4,5,6].map(i=>'المجموعة '+i),r:0,step:0,pts:[],picks:[],bag:[],who:'any'}}
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&v.phase?v:null}catch(e){return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -154,31 +166,41 @@ function dots(){$('#dots').innerHTML=S.phase==='start'?'':R.map((_,i)=>`<span cl
 /* البداية */
 function vStart(){
  view.innerHTML=`<div class="start"><div class="hero"><h1>تحدّي المستشار</h1><p>مزارعون من عُمان أرسلوا رسائل يطلبون نصيحتكم: أي نوع من التكاثر يناسبهم؟ ولماذا؟</p>
- <div class="steps"><div class="step"><b>✉️</b>رسالة مزارع على الشاشة</div><div class="step"><b>⏱️</b>45 ثانية تشاور</div><div class="step"><b>🔤</b>اكتبوا النوع وحرف السبب من البنك</div><div class="step"><b>✋</b>ارفعوا الورقة عند «3، 2، 1»</div></div></div>
+ <div class="steps"><div class="step"><b>✉️</b>رسالة مزارع على الشاشة</div><div class="step"><b>⏱️</b>45 ثانية تشاور</div><div class="step"><b>🔤</b>اكتبوا النوع وحرف السبب من البنك</div><div class="step"><b>✋</b>ارفعوا الورقة عند «3، 2، 1»</div><div class="step" style="grid-column:1/-1"><b>🎲</b>مجموعة عشوائية يشرح أحد أفرادها الإجابة: نقطة إضافية</div></div></div>
  <div class="setup"><h2>عدد المجموعات</h2><div class="seg" id="seg">${[3,4,5,6].map(k=>`<button data-k="${k}" class="${k===S.n?'on':''}">${k}</button>`).join('')}</div>
  <h2>أسماء المجموعات</h2><div class="names" id="nm">${Array.from({length:S.n},(_,i)=>`<input data-i="${i}" value="${esc(S.names[i]||'المجموعة '+(i+1))}" aria-label="اسم المجموعة ${i+1}">`).join('')}</div>
- <div class="pts">النقاط في كل جولة: <b>+1</b> للنوع الصحيح، و<b>+1</b> للحرف الصحيح، و<b>+1</b> إضافية للنصيحة الصحيحة. والفائز يحصل على ختم «مستشار معتمد».</div>
+ <h2>من يشرح إجابة المجموعة المختارة؟</h2><div class="seg" id="who"><button data-w="any" class="${S.who==='any'?'on':''}">أي فرد (عشوائي)</button><button data-w="spk" class="${S.who==='spk'?'on':''}">المتحدث</button></div>
+ <div class="pts">في كل جولة: كل مجموعة ترفع ورقتها، ولها <b>+1</b> للنوع الصحيح و<b>+1</b> للحرف الصحيح. ثم تختار اللعبة مجموعة عشوائياً (كل مجموعة يأتي دورها)، ويشرح أحد أفرادها الإجابة في جملة، فإن صحّت فلها <b>+1</b> إضافية. والفائز يحصل على ختم «مستشار معتمد».</div>
  <button class="btn big" id="go">ابدأ اللعبة ◀</button></div></div>`;
  $('#seg').onclick=e=>{const k=+e.target.dataset.k;if(!k)return;S.n=k;vStart()};
+ $('#who').onclick=e=>{const w=e.target.dataset.w;if(!w)return;S.who=w;save();vStart()};
  $('#nm').oninput=e=>{const i=+e.target.dataset.i;S.names[i]=e.target.value.trim()||('المجموعة '+(i+1));save()};
- $('#go').onclick=()=>{S.names=S.names.slice(0,S.n);while(S.names.length<S.n)S.names.push('المجموعة '+(S.names.length+1));S.pts=[];S.r=0;S.step=0;S.phase='round';save();render()};
+ $('#go').onclick=()=>{S.names=S.names.slice(0,S.n);while(S.names.length<S.n)S.names.push('المجموعة '+(S.names.length+1));S.pts=[];S.picks=[];S.bag=[];S.r=0;S.step=0;S.phase='round';save();render()};
 }
-/* الجولة: step 0 الرسالة، 1 العد، 2 الإجابة، 3 النصيحة */
+/* الجولة: 0 الرسالة والمؤقت، 1 رفعوا الأوراق، 2 من يجيب، 3 الإجابة والنقاط، 4 النصيحة */
 let tmr=null,left=SECS;
+function drawPick(){if(S.picks[S.r])return S.picks[S.r];
+ if(!S.bag||!S.bag.length){S.bag=Array.from({length:S.n},(_,g)=>g);for(let i=S.bag.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[S.bag[i],S.bag[j]]=[S.bag[j],S.bag[i]]}
+  const prev=S.picks[S.r-1];if(prev&&S.bag.length>1&&S.bag[0]===prev.g)S.bag.push(S.bag.shift())}
+ const g=S.bag.shift(), prevRole=(S.picks[S.r-1]||{}).role;let role=2;
+ if(S.who==='any'){do{role=Math.random()*4|0}while(role===prevRole&&Math.random()<.75)}
+ return S.picks[S.r]={g,role}}
 function vRound(){
- const d=R[S.r], last=S.r===R.length-1;
- const ans=S.step>=2?`<div class="ans"><div class="typ"><span class="note">نوع التكاثر:</span><span class="chip ${d.type==='جنسي'?'sex':'asex'}">${d.type==='جنسي'?'تكاثر جنسي':'تكاثر لاجنسي'}</span></div>
+ const d=R[S.r], last=S.r===R.length-1, pk=S.picks[S.r];
+ const turn=S.step>=2&&pk?`<div class="turn">🎤<div>يشرح الآن: <b>${esc(S.names[pk.g])}</b> · <b>${ROLES[pk.role]}</b><small>يقول نوع التكاثر وحرف السبب، ولماذا، في جملة واحدة.</small></div></div>`:'';
+ const ans=S.step>=3?`<div class="ans"><div class="typ"><span class="note">نوع التكاثر:</span><span class="chip ${d.type==='جنسي'?'sex':'asex'}">${d.type==='جنسي'?'تكاثر جنسي':'تكاثر لاجنسي'}</span></div>
   <div class="why">${d.letters.map(L=>`<div><span class="L">${L}</span>${esc(BANK.find(b=>b[0]===L)[1])}</div>`).join('')}${d.note?`<span class="note">${esc(d.note)}</span>`:''}</div>
-  ${S.step>=3?`<div class="adv">النصيحة: ${esc(d.advice)}<small>من الكتاب ص 63: ${esc(d.line)}</small></div>`:''}</div>`:'';
- const act=S.step===0?`<button class="btn big" id="act">⏱️ ابدأ التشاور</button>`:S.step===1?`<button class="btn big alt" id="act">🔍 اكشف الإجابة</button>`:S.step===2?`<button class="btn big" id="act">💡 أظهر النصيحة</button>`:`<button class="btn big alt" id="act">${last?'🏆 النتيجة النهائية':'الجولة التالية ◀'}</button>`;
- const row=ptsRow(S.r), canScore=S.step>=2, mx=Math.max(...Array.from({length:S.n},(_,g)=>total(g)));
+  ${S.step>=4?`<div class="adv">النصيحة: ${esc(d.advice)}<small>من الكتاب ص 63: ${esc(d.line)}</small></div>`:''}</div>`:'';
+ const act=[`<button class="btn big" id="act">⏱️ ابدأ التشاور</button>`,`<button class="btn big alt" id="act">🎲 من يشرح؟</button>`,`<button class="btn big alt" id="act">🔍 اكشف الإجابة</button>`,`<button class="btn big" id="act">💡 أظهر النصيحة</button>`,`<button class="btn big alt" id="act">${last?'🏆 النتيجة النهائية':'الجولة التالية ◀'}</button>`][S.step];
+ const row=ptsRow(S.r), canScore=S.step>=3, mx=Math.max(...Array.from({length:S.n},(_,g)=>total(g)));
+ const hint=['المجموعات تكتب النوع والحرف في جدول الجولات.','ارفعوا الأوراق! ثم اضغط «من يشرح؟» لتختار اللعبة مجموعة وفرداً منها.','استمع إلى الشرح أولاً، ثم اكشف الإجابة.','اضغط النوع والحرف لكل مجموعة رفعت الإجابة الصحيحة، و⭐ للمجموعة المختارة إن صحّ شرحها.','النصيحة النموذجية من الكتاب.'][S.step];
  view.innerHTML=`<div class="stage"><div class="card"><div class="from"><span class="av">${d.icon}</span><div><div class="who">${esc(d.who)}</div><div class="rn">الجولة ${S.r+1} من ${R.length} · رسالة إلى المستشار</div></div></div>
-  <p class="env">«${esc(d.text)}»</p>${ans}</div>
+  <p class="env">«${esc(d.text)}»</p>${turn}${ans}</div>
   <div class="side"><div class="timer" id="tm"><svg viewBox="0 0 120 120"><circle class="tr" cx="60" cy="60" r="52"/><circle class="tv" id="tv" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg><div class="num" id="tn">${S.step===0?SECS:0}</div><div class="lbl">ثانية</div></div>${act}
   ${S.step===0?'<button class="btn ghost" id="skip" hidden>انتهينا مبكراً ⏭</button>':''}</div></div>
-  <div class="board" style="--n:${S.n}">${Array.from({length:S.n},(_,g)=>{const t=total(g);return `<div class="g ${t&&t===mx?'lead':''}" data-g="${g}"><div class="hd"><span class="nm">${esc(S.names[g])}</span><span class="sc">${t}</span></div>
-   ${canScore?`<div class="tg">${['النوع','الحرف','⭐ النصيحة'].map((l,k)=>`<button data-g="${g}" data-k="${k}" class="${row[g][k]?'on':''} ${k===2?'star':''}" aria-pressed="${!!row[g][k]}">${l}</button>`).join('')}</div>`:''}</div>`}).join('')}</div>
-  <div class="foot"><span class="hint">${S.step<2?'المجموعات تكتب النوع والحرف في جدول الجولات، ثم ترفع الورقة معاً.':'اضغط على ما أصابت فيه كل مجموعة. والنقطة الإضافية لمتحدث يُختار عشوائياً.'}</span>${S.r>0||S.step>0?'<button class="ic" id="back">↩ رجوع</button>':''}</div>`;
+  <div class="board" style="--n:${S.n}">${Array.from({length:S.n},(_,g)=>{const t=total(g),isP=S.step>=2&&pk&&pk.g===g;return `<div class="g ${t&&t===mx?'lead':''} ${isP?'pick':''}" data-g="${g}">${isP?`<span class="mic">🎤 ${ROLES[pk.role]}</span>`:''}<div class="hd"><span class="nm">${esc(S.names[g])}</span><span class="sc">${t}</span></div>
+   ${canScore?`<div class="tg">${['النوع','الحرف','⭐ الشرح'].map((l,k)=>k===2&&!isP?'<span></span>':`<button data-g="${g}" data-k="${k}" class="${row[g][k]?'on':''} ${k===2?'star':''}" aria-pressed="${!!row[g][k]}">${l}</button>`).join('')}</div>`:''}</div>`}).join('')}</div>
+  <div class="foot"><span class="hint">${hint}</span>${S.r>0||S.step>0?'<button class="ic" id="back">↩ رجوع</button>':''}</div>`;
  if(S.step>=1){$('#tv').style.strokeDashoffset=326.7}
  $('#act').onclick=primary;
  const bk=$('#back');if(bk)bk.onclick=backStep;
@@ -187,14 +209,22 @@ function vRound(){
   if(on){beep(880,.18);const f=document.createElement('span');f.className='fly';f.textContent='+1';card.appendChild(f);setTimeout(()=>f.remove(),1000)}
   const m=Math.max(...Array.from({length:S.n},(_,i)=>total(i)));view.querySelectorAll('.g').forEach(c=>{const t=total(+c.dataset.g);c.classList.toggle('lead',t>0&&t===m)})});
 }
+let spinning=false;
+function spin(){if(spinning)return;spinning=true;const had=!!S.picks[S.r],pk=drawPick();save();const cards=[...view.querySelectorAll('.g')];
+ const steps=had?pk.g+1:S.n*(2+(Math.random()*2|0))+pk.g+1;let i=0;
+ (function t(){cards.forEach(c=>c.classList.remove('spin'));const k=i%S.n;cards[k].classList.add('spin');beep(440+k*40,.06,.1);
+  if(++i<steps)setTimeout(t,had?0:40+i*i*.25);else{cards.forEach(c=>c.classList.remove('spin'));ov.hidden=false;
+   ov.innerHTML=`<div class="ann"><div class="a1">🎤 يشرح إجابة الجولة ${S.r+1}</div><div class="a2">${esc(S.names[pk.g])}</div><div class="a3">${ROLES[pk.role]}</div></div>`;fanfare();
+   setTimeout(()=>{ov.hidden=true;spinning=false;S.step=2;save();render()},had?900:1900)}})()}
 function primary(){
  if(S.phase==='start'){$('#go').click();return}
- if(S.phase!=='round')return;
+ if(S.phase!=='round'||spinning)return;
  if(S.step===0){if(tmr){finishTimer();return}startTimer();return}
- if(S.step<3){S.step++;if(S.step===2)beep(660,.25);save();render();return}
+ if(S.step===1){spin();return}
+ if(S.step<4){S.step++;if(S.step===3)beep(660,.25);save();render();return}
  if(S.r<R.length-1){S.r++;S.step=0}else{S.phase='final'}save();render();
 }
-function backStep(){stopTimer();if(S.step>0)S.step=S.step===2?0:S.step-1;else if(S.r>0){S.r--;S.step=3}save();render()}
+function backStep(){if(spinning)return;stopTimer();if(S.step>0)S.step=S.step===1?0:S.step-1;else if(S.r>0){S.r--;S.step=4}save();render()}
 function startTimer(){left=SECS;const tn=$('#tn'),tv=$('#tv'),tm=$('#tm');$('#act').textContent='⏱️ تشاوروا...';$('#skip').hidden=false;$('#skip').onclick=finishTimer;beep(520,.2);
  tmr=setInterval(()=>{left--;tn.textContent=left;tv.style.strokeDashoffset=326.7*(1-left/SECS);if(left<=10)tm.classList.add('warn');if(left<=5&&left>0)beep(700,.12);if(left<=0)finishTimer()},1000)}
 function stopTimer(){if(tmr){clearInterval(tmr);tmr=null}}
@@ -208,7 +238,7 @@ function vFinal(){
  ${win.length?`<div style="display:flex;align-items:center;gap:1.4em;flex-wrap:wrap;justify-content:center"><div class="stamp">مستشار<br>معتمد ✔</div><div class="winner">مبروك ${win.map(g=>esc(S.names[g])).join(' و')}!<br><span class="hint">${win.length>1?'تعادل في الصدارة: الختم للجميع':'تحصل على ختم «مستشار معتمد»'}</span></div></div>`:''}
  <div style="display:flex;gap:.6em"><button class="btn ghost" id="back">↩ رجوع إلى الجولة 6</button><button class="btn" id="again">↺ لعبة جديدة</button></div></div>`;
  requestAnimationFrame(()=>requestAnimationFrame(()=>view.querySelectorAll('.col').forEach(c=>c.style.height='calc(2.4em + '+(c.dataset.h*.8)+'%)')));
- $('#back').onclick=()=>{S.phase='round';S.r=R.length-1;S.step=3;save();render()};
+ $('#back').onclick=()=>{S.phase='round';S.r=R.length-1;S.step=4;save();render()};
  $('#again').onclick=newGame;
  if(win.length)setTimeout(()=>{fanfare();confetti()},1500);
 }
