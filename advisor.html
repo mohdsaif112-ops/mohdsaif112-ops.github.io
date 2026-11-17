@@ -150,11 +150,11 @@ canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:30}
 <div class="over" id="ov" hidden></div>
 <canvas id="cf" hidden></canvas>
 <script>
-const DATA={"rounds": [{"who": "أبو سالم، مزارع من الباطنة", "text": "عزيزي المستشار، عندي نخلة خلاص تمرها أحلى من حلوى زوجتي (أرجو ألّا تخبروها!)، وتنمو أحسن نمو في مزرعتي، وبجانبها أرض واسعة فارغة. أريد نخيلاً مثلها تماماً، لا يزيد ولا ينقص. هل أزرع نوى تمرها أم فسائلها؟ ولماذا؟ وأرجو الرد قبل أن ينتهي التمر!", "advice": "ازرع الفسائل؛ لأنها تعطي نخيلاً مطابقاً للنخلة الأم المتكيّفة.", "line": "«سيكون نسله إذا ورث الجينات نفسها متكيّفاً أيضاً بشكل جيد».", "type": "لاجنسي", "letters": ["أ"], "note": "", "icon": "🌴"}, {"who": "حمد، راعي غنم من عبري", "text": "غنمي تحب قرون السمر أكثر مما تحبني! تأكلها ثم تمشي بعيداً، وبعد أشهر تنبت أشجار سمر جديدة في أماكن لم يكن فيها شيء، والرياح أيضاً تحمل البذور. ما نوع التكاثر هنا؟ وما فائدة انتشار البذور بعيداً عن الشجرة الأم؟ وهل تستحق غنمي مكافأة؟", "advice": "تكاثر جنسي؛ وانتشار البذور يقلّل التنافس ويوصل السمر إلى أماكن جديدة.", "line": "«يكون أقل احتمالاً للتنافس معهما، كما يمكنه أن يستوطن مناطق جديدة».", "type": "جنسي", "letters": ["و"], "note": "", "icon": "🐐"}, {"who": "أم خالد، مزارعة من الداخلية", "text": "كل نخيل مزرعتي فسائل من نخلة واحدة، كأنها توائم متطابقة: الطول نفسه والتمر نفسه، وحتى الميلة نفسها! وسمعت اليوم أن آفة جديدة وصلت إلى منطقتنا، فقال ابني: «لا تقلقي يا أمي، نخيلنا قوي». ما نوع التكاثر الذي جاء منه نخيلي؟ وهل كلام ابني صحيح، أم أن نخيلي كله في خطر؟ ولماذا؟", "advice": "تكاثر لاجنسي، ونخيلك كله في خطر؛ لأنه بلا تنوع جيني، فما يصيب نخلة قد يصيبها كلها.", "line": "«لا يُنتج التكاثر اللاجنسي تنوعاً جينياً»، فإذا ظهرت آفة جديدة تعرّض النسل كله للخطر.", "type": "لاجنسي", "letters": ["ج"], "note": "", "icon": "🌴"}, {"who": "خالد، مهندس زراعي", "text": "جاري يرش المبيدات على كل شيء يتحرك، حتى على الفراشات! والنتيجة أن نباتاً برياً في منطقتنا كانت تلقّحه حشرة واحدة فقط، وصارت هذه الحشرة نادرة. ما نوع التكاثر الذي سيتضرّر في هذا النبات؟ وما المشكلة التي ستواجهه؟", "advice": "تكاثره الجنسي سيقلّ؛ لأنه يعتمد على الحشرة في التلقيح، فاحمِها وقلّل رش المبيدات.", "line": "من عيوب التكاثر الجنسي أنه يعتمد على التلقيح بالرياح أو الحشرات (جدول السؤال 3 د).", "type": "جنسي", "letters": ["ز"], "note": "", "icon": "🐝"}], "bank": [["أ", "النسل متكيّف مع بيئته مثل النبات الأم."], ["ب", "لا يحتاج إلى تلقيح أو إلى فرد آخر."], ["ج", "لا تنوع جيني، فالنسل عرضة لمرض جديد أو تغيّر البيئة."], ["د", "ازدحام وتنافس قرب النبات الأم."], ["هـ", "تنوع جيني: قد ينجو بعض النسل من مرض جديد."], ["و", "انتشار البذور: يقل التنافس ويستوطن النسل مناطق جديدة."], ["ز", "يعتمد على التلقيح بالرياح أو الحشرات."], ["ح", "يتطلب عادة نباتاً آخر."]]};
-const R=DATA.rounds, BANK=DATA.bank, SECS=45, KEY='advisor-game-v4', ROLES=['القارئ','الكاتب','المتحدث','مراقب الوقت'];
+const DATA={"rounds": [{"who": "أبو سالم، مزارع من الباطنة", "text": "عزيزي المستشار، عندي نخلة خلاص تمرها أحلى من حلوى زوجتي (أرجو ألّا تخبروها!)، وتنمو أحسن نمو في مزرعتي، وبجانبها أرض واسعة فارغة. أريد نخيلاً مثلها تماماً، لا يزيد ولا ينقص. هل أزرع نوى تمرها أم فسائلها؟ ولماذا؟ وأرجو الرد قبل أن ينتهي التمر!", "advice": "ازرع الفسائل؛ لأنها تعطي نخيلاً مطابقاً للنخلة الأم المتكيّفة.", "line": "«سيكون نسله إذا ورث الجينات نفسها متكيّفاً أيضاً بشكل جيد».", "type": "لاجنسي", "letters": ["أ"], "note": "", "icon": "🌴"}, {"who": "حمد، راعي غنم من عبري", "text": "غنمي تحب قرون السمر أكثر مما تحبني! تأكلها ثم تمشي بعيداً، وبعد أشهر تنبت أشجار سمر جديدة في أماكن لم يكن فيها شيء، والرياح أيضاً تحمل البذور. ما نوع التكاثر هنا؟ وما فائدة انتشار البذور بعيداً عن الشجرة الأم؟ وهل تستحق غنمي مكافأة؟", "advice": "تكاثر جنسي؛ وانتشار البذور يقلّل التنافس ويوصل السمر إلى أماكن جديدة.", "line": "«يكون أقل احتمالاً للتنافس معهما، كما يمكنه أن يستوطن مناطق جديدة».", "type": "جنسي", "letters": ["و"], "note": "", "icon": "🐐"}, {"who": "خالد، مهندس زراعي", "text": "جاري يرش المبيدات على كل شيء يتحرك، حتى على الفراشات! والنتيجة أن نباتاً برياً في منطقتنا كانت تلقّحه حشرة واحدة فقط، وصارت هذه الحشرة نادرة. ما نوع التكاثر الذي سيتضرّر في هذا النبات؟ وما المشكلة التي ستواجهه؟", "advice": "تكاثره الجنسي سيقلّ؛ لأنه يعتمد على الحشرة في التلقيح، فاحمِها وقلّل رش المبيدات.", "line": "من عيوب التكاثر الجنسي أنه يعتمد على التلقيح بالرياح أو الحشرات (جدول السؤال 3 د).", "type": "جنسي", "letters": ["ز"], "note": "", "icon": "🐝"}, {"who": "أم خالد، مزارعة من الداخلية", "text": "كل نخيل مزرعتي فسائل من نخلة واحدة، كأنها توائم متطابقة: الطول نفسه والتمر نفسه، وحتى الميلة نفسها! وسمعت اليوم أن آفة جديدة وصلت إلى منطقتنا، فقال ابني: «لا تقلقي يا أمي، نخيلنا قوي». ما نوع التكاثر الذي جاء منه نخيلي؟ وهل كلام ابني صحيح، أم أن نخيلي كله في خطر؟ ولماذا؟", "advice": "تكاثر لاجنسي، ونخيلك كله في خطر؛ لأنه بلا تنوع جيني، فما يصيب نخلة قد يصيبها كلها.", "line": "«لا يُنتج التكاثر اللاجنسي تنوعاً جينياً»، فإذا ظهرت آفة جديدة تعرّض النسل كله للخطر.", "type": "لاجنسي", "letters": ["ج"], "note": "", "icon": "🌴"}], "bank": [["أ", "النسل متكيّف مع بيئته مثل النبات الأم."], ["ب", "لا يحتاج إلى تلقيح أو إلى فرد آخر."], ["ج", "لا تنوع جيني، فالنسل عرضة لمرض جديد أو تغيّر البيئة."], ["د", "ازدحام وتنافس قرب النبات الأم."], ["هـ", "تنوع جيني: قد ينجو بعض النسل من مرض جديد."], ["و", "انتشار البذور: يقل التنافس ويستوطن النسل مناطق جديدة."], ["ز", "يعتمد على التلقيح بالرياح أو الحشرات."], ["ح", "يتطلب عادة نباتاً آخر."]]};
+const R=DATA.rounds, BANK=DATA.bank, SECS=45, KEY='advisor-game-v5', ROLES=['القارئ','الكاتب','المتحدث','مراقب الوقت'];
 const $=s=>document.querySelector(s), view=$('#view'), ov=$('#ov');
 let S=load()||fresh();
-function fresh(){return{phase:'start',n:6,names:[1,2,3,4,5,6].map(i=>'المجموعة '+i),r:0,step:0,pts:[],picks:[],bag:[],who:'any'}}
+function fresh(){return{phase:'start',n:6,names:[1,2,3,4,5,6].map(i=>'المجموعة '+i),r:0,step:0,pts:[],picks:[],extra:[],bag:[],who:'any'}}
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&v.phase?v:null}catch(e){return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -168,49 +168,56 @@ function dots(){$('#dots').innerHTML=S.phase==='start'?'':R.map((_,i)=>`<span cl
 /* البداية */
 function vStart(){
  view.innerHTML=`<div class="start"><div class="hero"><h1>تحدّي المستشار</h1><p>مزارعون من عُمان أرسلوا رسائل يطلبون نصيحتكم: أي نوع من التكاثر يناسبهم؟ ولماذا؟</p>
- <div class="steps"><div class="step"><b>✉️</b>رسالة مزارع على الشاشة</div><div class="step"><b>⏱️</b>45 ثانية تشاور</div><div class="step"><b>🔤</b>اكتبوا النوع وحرف السبب من البنك</div><div class="step"><b>✋</b>ارفعوا الورقة عند «3، 2، 1»</div><div class="step" style="grid-column:1/-1"><b>🎲</b>في كل جولة ثلاث مجموعات: الأولى تقول النوع، والثانية الحرف، والثالثة السبب</div></div></div>
+ <div class="steps"><div class="step"><b>✉️</b>رسالة مزارع على الشاشة</div><div class="step"><b>⏱️</b>45 ثانية تشاور</div><div class="step"><b>🔤</b>اكتبوا النوع وحرف السبب من البنك</div><div class="step"><b>✋</b>ارفعوا الورقة عند «3، 2، 1» ثم اقلبوها</div><div class="step" style="grid-column:1/-1"><b>🎲</b>في كل جولة ثلاث مجموعات: الأولى تقول النوع، والثانية الحرف، والثالثة السبب</div></div></div>
  <div class="setup"><h2>عدد المجموعات</h2><div class="seg" id="seg">${[3,4,5,6].map(k=>`<button data-k="${k}" class="${k===S.n?'on':''}">${k}</button>`).join('')}</div>
  <h2>أسماء المجموعات</h2><div class="names" id="nm">${Array.from({length:S.n},(_,i)=>`<input data-i="${i}" value="${esc(S.names[i]||'المجموعة '+(i+1))}" aria-label="اسم المجموعة ${i+1}">`).join('')}</div>
  <h2>من يشرح من المجموعة المختارة؟</h2><div class="seg" id="who"><button data-w="any" class="${S.who==='any'?'on':''}">أي فرد (عشوائي)</button><button data-w="spk" class="${S.who==='spk'?'on':''}">المتحدث</button></div>
- <div class="pts">في كل جولة: كل المجموعات ترفع أوراقها، ثم تختار اللعبة ثلاث مجموعات مختلفة: الأولى تقول <b>النوع</b>، والثانية <b>الحرف</b>، والثالثة <b>السبب</b> في جملة، كلٌّ من ورقتها، ولكل إجابة صحيحة <b>+1</b>. وفي الجولات الأربع يأتي دور كل مجموعة من 6 مرتين بالتساوي. والفائز يحصل على ختم «مستشار معتمد».</div>
+ <div class="pts">في كل جولة: كل المجموعات ترفع أوراقها، ثم تختار اللعبة ثلاث مجموعات مختلفة: الأولى تقول <b>النوع</b>، والثانية <b>الحرف</b>، والثالثة <b>السبب</b> في جملة، كلٌّ من ورقتها، ولكل إجابة صحيحة <b>+1</b>، وإذا أخطأت تنتقل الفرصة إلى مجموعة أخرى. وفي الجولات الأربع يأتي دور كل مجموعة من 6 مرتين بالتساوي. والفائز يحصل على ختم «مستشار معتمد».</div>
  <button class="btn big" id="go">ابدأ اللعبة ◀</button></div></div>`;
  $('#seg').onclick=e=>{const k=+e.target.dataset.k;if(!k)return;S.n=k;vStart()};
  $('#who').onclick=e=>{const w=e.target.dataset.w;if(!w)return;S.who=w;save();vStart()};
  $('#nm').oninput=e=>{const i=+e.target.dataset.i;S.names[i]=e.target.value.trim()||('المجموعة '+(i+1));save()};
- $('#go').onclick=()=>{S.names=S.names.slice(0,S.n);while(S.names.length<S.n)S.names.push('المجموعة '+(S.names.length+1));S.pts=[];S.picks=[];S.bag=[];S.r=0;S.step=0;S.phase='round';save();render()};
+ $('#go').onclick=()=>{S.names=S.names.slice(0,S.n);while(S.names.length<S.n)S.names.push('المجموعة '+(S.names.length+1));S.pts=[];S.picks=[];S.extra=[];S.bag=[];S.r=0;S.step=0;S.phase='round';save();render()};
 }
 /* الجولة: 0 الرسالة والمؤقت، 1 رفعوا الأوراق، 2 من يقول النوع، 3 كشف النوع، 4 من يقول الحرف، 5 كشف الحرف، 6 من يقول السبب، 7 النصيحة */
 let tmr=null,left=SECS;
 const PART=['النوع','الحرف','السبب'], ASK=['يقرأ نوع التكاثر من ورقة مجموعته.','يقرأ حرف السبب من ورقة مجموعته.','يشرح السبب في جملة: «ننصحه بـ ... لأن ...».'];
 function allPicks(){return S.picks.flat().filter(Boolean)}
 function drawPick(k){S.picks[S.r]=S.picks[S.r]||[];const cur=S.picks[S.r];if(cur[k])return cur[k];
- const used=cur.filter(Boolean).map(x=>x.g), prev=allPicks().slice(-1)[0];
+ const used=cur.filter(Boolean).concat((S.extra[S.r]||[]).filter(Boolean)).map(x=>x.g), prev=allPicks().slice(-1)[0];
  if(!S.bag||!S.bag.length){S.bag=Array.from({length:S.n},(_,g)=>g);for(let i=S.bag.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[S.bag[i],S.bag[j]]=[S.bag[j],S.bag[i]]}
   if(prev&&S.bag.length>1&&S.bag[0]===prev.g)S.bag.push(S.bag.shift())}
  let idx=S.bag.findIndex(g=>!used.includes(g));let g;
  if(idx>=0)g=S.bag.splice(idx,1)[0];else{const free=Array.from({length:S.n},(_,x)=>x).filter(x=>!used.includes(x));g=free[Math.random()*free.length|0]}
  const pr=prev?prev.role:-1;let role=2;if(S.who==='any'){do{role=Math.random()*4|0}while(role===pr&&Math.random()<.8)}
  return cur[k]={g,role}}
+function drawExtra(k){S.extra=S.extra||[];S.extra[S.r]=S.extra[S.r]||[];const ex=S.extra[S.r];if(ex[k])return ex[k];
+ const used=(S.picks[S.r]||[]).concat(ex).filter(Boolean).map(x=>x.g);let free=Array.from({length:S.n},(_,x)=>x).filter(x=>!used.includes(x));
+ if(!free.length)free=Array.from({length:S.n},(_,x)=>x).filter(x=>x!==(S.picks[S.r][k]||{}).g);
+ const g=free[Math.random()*free.length|0];let role=2;if(S.who==='any')role=Math.random()*4|0;return ex[k]={g,role}}
 function vRound(){
  const d=R[S.r], last=S.r===R.length-1, P=S.picks[S.r]||[], k=S.step>=2?Math.min(2,(S.step-2)>>1):-1, cur=k>=0?P[k]:null;
- const turn=cur?`<div class="turn">🎤<div>${PART[k]}: <b>${esc(S.names[cur.g])}</b> · <b>${ROLES[cur.role]}</b><small>${ASK[k]}</small></div></div>`:'';
+ const X=(S.extra&&S.extra[S.r])||[], xc=k>=0?X[k]:null;
+ const turn=cur?`<div class="turn">🎤<div>${PART[k]}: <b>${esc(S.names[cur.g])}</b> · <b>${ROLES[cur.role]}</b><small>${ASK[k]}</small></div></div>`+(xc?`<div class="turn">🔁<div>فرصة ثانية: <b>${esc(S.names[xc.g])}</b> · <b>${ROLES[xc.role]}</b><small>${ASK[k]}</small></div></div>`:''):'';
  const ans=S.step>=3?`<div class="ans"><div class="typ"><span class="note">نوع التكاثر:</span><span class="chip ${d.type==='جنسي'?'sex':'asex'}">${d.type==='جنسي'?'تكاثر جنسي':'تكاثر لاجنسي'}</span></div>
   ${S.step>=5?`<div class="why">${d.letters.map(L=>`<div><span class="L">${L}</span>${esc(BANK.find(b=>b[0]===L)[1])}</div>`).join('')}</div>`:''}
   ${S.step>=7?`<div class="adv">النصيحة: ${esc(d.advice)}<small>${esc(d.line)}</small></div>`:''}</div>`:'';
  const act=[`<button class="btn big" id="act">⏱️ ابدأ التشاور</button>`,`<button class="btn big alt" id="act">🎲 من يقول النوع؟</button>`,`<button class="btn big" id="act">🔍 اكشف النوع</button>`,`<button class="btn big alt" id="act">🎲 من يقول الحرف؟</button>`,`<button class="btn big" id="act">🔍 اكشف الحرف</button>`,`<button class="btn big alt" id="act">🎲 من يقول السبب؟</button>`,`<button class="btn big" id="act">💡 أظهر النصيحة</button>`,`<button class="btn big alt" id="act">${last?'🏆 النتيجة النهائية':'الجولة التالية ◀'}</button>`][S.step];
  const row=ptsRow(S.r), mx=Math.max(...Array.from({length:S.n},(_,g)=>total(g)));
- const hint=['كل مجموعة تكتب النوع والحرف في جدول الجولات.','ارفعوا الأوراق! ثم اضغط «من يقول النوع؟».','استمع إلى الإجابة من ورقة المجموعة، ثم اكشف النوع.','اضغط ✔ إن كانت الإجابة صحيحة، ثم «من يقول الحرف؟».','استمع إلى الحرف، ثم اكشفه.','اضغط ✔ إن كان الحرف صحيحاً، ثم «من يقول السبب؟».','استمع إلى السبب، ثم أظهر النصيحة.','اضغط ✔ إن كان السبب صحيحاً.'][S.step];
- const shown=(q,g)=>P[q]&&P[q].g===g&&S.step>=2*q+3;
+ const hint=['كل مجموعة تكتب النوع والحرف في جدول الجولات.','ارفعوا الأوراق، ثم اقلبوها على الطاولة! ولا تُقلب إلا ورقة المجموعة التي يأتي دورها. اضغط «من يقول النوع؟».','تقلب المجموعة ورقتها ويقرأ الفرد النوع. إن أخطأ فاضغط «فرصة ثانية» قبل الكشف.','اضغط ✔ لمن أجاب صحيحاً، ثم «من يقول الحرف؟».','استمع إلى الحرف من الورقة. إن أخطأ فاضغط «فرصة ثانية» قبل الكشف.','اضغط ✔ لمن أجاب صحيحاً، ثم «من يقول السبب؟».','استمع إلى السبب. إن أخطأ فاضغط «فرصة ثانية» قبل إظهار النصيحة.','اضغط ✔ لمن أجاب صحيحاً.'][S.step];
+ const shown=(q,g)=>((P[q]&&P[q].g===g)||(X[q]&&X[q].g===g))&&S.step>=2*q+3;
+ const second=(S.step===2||S.step===4||S.step===6)&&!xc?'<button class="btn ghost" id="x2">🔁 خطأ؟ فرصة ثانية</button>':'';
  view.innerHTML=`<div class="stage"><div class="card"><div class="from"><span class="av">${d.icon}</span><div><div class="who">${esc(d.who)}</div><div class="rn">الجولة ${S.r+1} من ${R.length} · رسالة إلى المستشار</div></div></div>
   <p class="env" ${S.step>=3?'style="font-size:1.08em;line-height:1.6"':''}>«${esc(d.text)}»</p>${turn}${ans}</div>
-  <div class="side"><div class="timer" id="tm"><svg viewBox="0 0 120 120"><circle class="tr" cx="60" cy="60" r="52"/><circle class="tv" id="tv" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg><div class="num" id="tn">${S.step===0?SECS:0}</div><div class="lbl">ثانية</div></div>${act}
+  <div class="side"><div class="timer" id="tm"><svg viewBox="0 0 120 120"><circle class="tr" cx="60" cy="60" r="52"/><circle class="tv" id="tv" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg><div class="num" id="tn">${S.step===0?SECS:0}</div><div class="lbl">ثانية</div></div>${act}${second}
   ${S.step===0?'<button class="btn ghost" id="skip" hidden>انتهينا مبكراً ⏭</button>':''}</div></div>
-  <div class="board" style="--n:${S.n}">${Array.from({length:S.n},(_,g)=>{const t=total(g),isP=cur&&cur.g===g,q=P.findIndex((x,qq)=>x&&x.g===g&&S.step>=2*qq+2);
-   return `<div class="g ${t&&t===mx?'lead':''} ${isP?'pick':''}" data-g="${g}">${q>=0?`<span class="mic">🎤 ${PART[q]} · ${ROLES[P[q].role]}</span>`:''}<div class="hd"><span class="nm">${esc(S.names[g])}</span><span class="sc">${t}</span></div>
+  <div class="board" style="--n:${S.n}">${Array.from({length:S.n},(_,g)=>{const t=total(g),isP=cur&&cur.g===g,q=P.findIndex((x,qq)=>x&&x.g===g&&S.step>=2*qq+2),qx=X.findIndex((x,qq)=>x&&x.g===g&&S.step>=2*qq+2),isX=xc&&xc.g===g;
+   return `<div class="g ${t&&t===mx?'lead':''} ${isP||isX?'pick':''}" data-g="${g}">${q>=0?`<span class="mic">🎤 ${PART[q]} · ${ROLES[P[q].role]}</span>`:qx>=0?`<span class="mic">🔁 ${PART[qx]} · ${ROLES[X[qx].role]}</span>`:''}<div class="hd"><span class="nm">${esc(S.names[g])}</span><span class="sc">${t}</span></div>
    <div class="tg one">${[0,1,2].filter(qq=>shown(qq,g)).map(qq=>`<button data-g="${g}" data-k="${qq}" class="${row[g][qq]?'on':''}" aria-pressed="${!!row[g][qq]}">✔ ${PART[qq]} صحيح</button>`).join('')}</div></div>`}).join('')}</div>
   <div class="foot"><span class="hint">${hint}</span>${S.r>0||S.step>0?'<button class="ic" id="back">↩ رجوع</button>':''}</div>`;
  if(S.step>=1){$('#tv').style.strokeDashoffset=326.7}
  $('#act').onclick=primary;
+ const x2=$('#x2');if(x2)x2.onclick=()=>spin(k,true);
  const bk=$('#back');if(bk)bk.onclick=backStep;
  view.querySelectorAll('.tg button').forEach(b=>b.onclick=()=>{const g=+b.dataset.g,k=+b.dataset.k;row[g][k]=row[g][k]?0:1;save();
   const on=row[g][k];b.classList.toggle('on',!!on);b.setAttribute('aria-pressed',!!on);const card=b.closest('.g');card.querySelector('.sc').textContent=total(g);
@@ -218,11 +225,11 @@ function vRound(){
   const m=Math.max(...Array.from({length:S.n},(_,i)=>total(i)));view.querySelectorAll('.g').forEach(c=>{const t=total(+c.dataset.g);c.classList.toggle('lead',t>0&&t===m)})});
 }
 let spinning=false;
-function spin(k){if(spinning)return;spinning=true;const had=!!(S.picks[S.r]&&S.picks[S.r][k]),pk=drawPick(k);save();const cards=[...view.querySelectorAll('.g')];
+function spin(k,ext){if(spinning)return;spinning=true;const had=ext?!!(S.extra&&S.extra[S.r]&&S.extra[S.r][k]):!!(S.picks[S.r]&&S.picks[S.r][k]),pk=ext?drawExtra(k):drawPick(k);save();const cards=[...view.querySelectorAll('.g')];
  const steps=had?pk.g+1:S.n*(2+(Math.random()*2|0))+pk.g+1;let i=0;
  (function t(){cards.forEach(c=>c.classList.remove('spin'));const q=i%S.n;cards[q].classList.add('spin');if(!had)beep(440+q*40,.06,.1);
   if(++i<steps)setTimeout(t,had?0:40+i*i*.25);else{cards.forEach(c=>c.classList.remove('spin'));ov.hidden=false;
-   ov.innerHTML=`<div class="ann"><div class="a1">🎤 من يقول ${PART[k]}؟ · الجولة ${S.r+1}</div><div class="a2">${esc(S.names[pk.g])}</div><div class="a3">${ROLES[pk.role]}</div></div>`;if(!had)fanfare();
+   ov.innerHTML=`<div class="ann"><div class="a1">${ext?'🔁 فرصة ثانية':'🎤 من يقول '+PART[k]+'؟'} · الجولة ${S.r+1}</div><div class="a2">${esc(S.names[pk.g])}</div><div class="a3">${ROLES[pk.role]}</div></div>`;if(!had)fanfare();
    setTimeout(()=>{ov.hidden=true;spinning=false;S.step=2*k+2;save();render()},had?900:1900)}})()}
 function primary(){
  if(S.phase==='start'){$('#go').click();return}
